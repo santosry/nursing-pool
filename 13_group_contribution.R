@@ -76,10 +76,10 @@ for (col in names(model_data)) {
 model_data[, gender_male := as.integer(gender == "M")]
 model_data[, admission_emergency := as.integer(admission_type == "EMERGENCY")]
 
-# --- Definir blocos conceituais ----------------------------------------------
+# --- Definir blocos conceituais (los_days removido: vazamento temporal) ---
 feature_blocks <- list(
   "Demografia" = c("anchor_age", "gender_male"),
-  "Internação" = c("los_days", "admission_emergency"),
+  "Admissão" = c("admission_emergency"),
   "NANDA-I (Diagnósticos)" = c("n_nanda", "n_domains", "has_cardiac", "has_comfort",
                                 "has_safety", "has_nutrition", "has_activity",
                                 "has_cognition", "has_elimination",

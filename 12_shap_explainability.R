@@ -80,7 +80,8 @@ model_data[, gender_male := as.integer(gender == "M")]
 model_data[, admission_emergency := as.integer(admission_type == "EMERGENCY")]
 
 exclude_cols <- c("subject_id", "hadm_id", "gender", "admission_type",
-                  "discharge_location", "dischtime", "admittime", "insurance")
+                  "discharge_location", "dischtime", "admittime", "insurance",
+                  "los_days")  # los_days removido: vazamento temporal
 feature_cols <- intersect(split_info$feature_cols, names(model_data))
 
 message(sprintf("[SHAP] %d features disponíveis para SHAP", length(feature_cols)))

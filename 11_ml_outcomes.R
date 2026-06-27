@@ -106,9 +106,11 @@ for (col in names(model_data)) {
 model_data[, gender_male := as.integer(gender == "M")]
 model_data[, admission_emergency := as.integer(admission_type == "EMERGENCY")]
 
-# Remover colunas não preditoras
+# Remover colunas não preditoras — ATENÇÃO: los_days NÃO é preditor válido
+# (vazamento temporal: pacientes que morrem têm LOS truncado)
 exclude_cols <- c("subject_id", "hadm_id", "gender", "admission_type",
-                  "discharge_location", "dischtime", "admittime", "insurance")
+                  "discharge_location", "dischtime", "admittime", "insurance",
+                  "los_days")  # los_days removido por vazamento temporal
 feature_cols <- setdiff(names(model_data), c(exclude_cols, "mortality"))
 
 message(sprintf("[ML] Dataset: %d admissões, %d features",
