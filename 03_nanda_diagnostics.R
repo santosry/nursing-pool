@@ -11,7 +11,7 @@
 #      Nursing Diagnoses 2024-2026. 13th ed. Thieme.
 # =============================================================================
 
-#' Processa e enriquece os diagnósticos NANDA
+#' Processa e enriquece as hipóteses NANDA-I
 #' Adiciona:
 #'   - Agrupamento por domínios NANDA
 #'   - Cálculo de prevalência
@@ -156,7 +156,7 @@ process_nanda_diagnostics <- function(nanda_data, data) {
   nanda_data
 }
 
-#' Salva os diagnósticos NANDA processados
+#' Salva as hipóteses NANDA-I processadas
 save_nanda_results <- function(nanda_data) {
   dir.create(PATHS$output_dir, showWarnings = FALSE, recursive = TRUE)
 

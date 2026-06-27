@@ -242,7 +242,7 @@ for (sid, hid, dom, cls, label, code, dtype), group in grouped:
         'status': confidence,
         'confidence_note': 'Regra computacional; NAO validado por enfermeiro especialista',
         'evidence_summary': json.dumps([f'{e["evidence_category"]}: {e["evidence_detail"][:80]}' for e in evidence_list[:5]], ensure_ascii=False),
-        'limitation': 'Hipotese gerada por regra computacional. Requer validacao clinica por enfermeiro.'
+        'limitation': 'Hipotese gerada por regra computacional com suporte de IA (DeepSeek-v4-Pro). Nao validada por enfermeiro especialista.'
     })
 
 fact_hypothesis = pd.DataFrame(hypothesis_rows)

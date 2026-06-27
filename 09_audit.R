@@ -94,8 +94,8 @@ full_pipeline_audit <- function(data, nanda_raw, nanda_proc,
     }
   }
 
-  # Verificar consistência dos diagnósticos extraídos
-  message(sprintf("  [OK] Diagnósticos NANDA extraídos: %d", nrow(nanda_raw)))
+  # Verificar consistência das hipóteses NANDA-I derivadas
+  message(sprintf("  [OK] Hipóteses NANDA-I derivadas: %d", nrow(nanda_raw)))
   n_domains <- nanda_raw[, uniqueN(nanda_domain)]
   n_labels <- nanda_raw[, uniqueN(nanda_label)]
   message(sprintf("  [OK] Domínios NANDA: %d | Rótulos: %d", n_domains, n_labels))
@@ -126,7 +126,7 @@ full_pipeline_audit <- function(data, nanda_raw, nanda_proc,
 
   message("\n[AUDIT] --- Etapa 3: Mapeamento NOC ---")
 
-  message(sprintf("  [OK] Indicadores NOC extraídos: %d", nrow(noc_raw)))
+  message(sprintf("  [OK] Indicadores NOC operacionalizados: %d", nrow(noc_raw)))
 
   if (nrow(noc_raw) > 0) {
     n_indicators <- noc_raw[, uniqueN(indicator)]

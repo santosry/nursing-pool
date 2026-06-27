@@ -145,11 +145,12 @@ Rscript pipeline.R --mode=synthetic
 
 Foram utilizadas ferramentas de inteligencia artificial generativa, incluindo
 ChatGPT 5.5, DeepSeek-v4-Pro e Grok, para apoio a organizacao metodologica,
-revisao textual, depuracao de codigo e auditoria. As ferramentas nao
-substituiram a interpretacao cientifica dos autores, que permanecem
-integralmente responsaveis pelo conteudo final, pela veracidade das
-informacoes, pela originalidade, pelas analises, pelas referencias e
-por eventuais erros ou imprecisoes.
+revisao textual, depuracao de codigo, auditoria e inferencia de mapeamentos
+conceituais entre variaveis clinicas do MIMIC-IV e as terminologias NANDA-I,
+NOC e NIC por similaridade semantica. As ferramentas nao substituiram a
+interpretacao cientifica dos autores, que permanecem integralmente responsaveis
+pelo conteudo final, pela veracidade das informacoes, pela originalidade,
+pelas analises, pelas referencias e por eventuais erros ou imprecisoes.
 
 ---
 

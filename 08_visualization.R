@@ -377,7 +377,7 @@ fig5b_curva_roc <- function(roc_obj, auc_val) {
              size = 4, fontface = "bold", color = "#333333", hjust = 0) +
     labs(
       title    = "Curva ROC — Modelo Preditivo de Mortalidade",
-      subtitle = "Performance discriminativa dos diagnósticos NANDA derivados",
+      subtitle = "Performance discriminativa das hipóteses NANDA-I derivadas",
       x        = "1 — Especificidade",
       y        = "Sensibilidade",
       caption  = "AUC < 0.60: modelo NÃO adequado para uso clínico. Fins demonstrativos exclusivamente."
