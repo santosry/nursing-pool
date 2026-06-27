@@ -1,0 +1,63 @@
+# =============================================================================
+# .gitignore — Nursing Data Pipeline (MIT License)
+# =============================================================================
+# ATENÇÃO: Dados reais do MIMIC-IV JAMAIS devem ser versionados aqui.
+# O repositório contém apenas código, dados sintéticos e documentação.
+# =============================================================================
+
+# --- Dados reais do MIMIC-IV (NUNCA COMMITAR) ---
+mimiciv/
+mimic-iv*/
+physionet/
+raw/
+data/raw/
+*.csv.gz
+*.parquet
+
+# --- CSVs gerados com dados em nível de paciente (modo real) ---
+# (CSVs do modo sintético sem dados reais são permitidos)
+output/nanda_diagnostics.csv
+output/noc_outcomes.csv
+output/nic_interventions.csv
+output/statistical_results.rds
+output/audit_report.rds
+output/cache/
+
+# --- Credenciais e tokens ---
+.env
+*.token
+*.key
+*.pem
+credentials.json
+google-credentials.json
+
+# --- R ---
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+.Renviron
+
+# --- renv (se usado) ---
+renv/library/
+renv/staging/
+renv/sandbox/
+renv/python/
+
+# --- Docker ---
+*.tar
+
+# --- Sistema operacional ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+*.tmp
+*.log
+
+# --- IDE ---
+.idea/
+.vscode/
+*.Rhistory
