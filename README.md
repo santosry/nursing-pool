@@ -72,12 +72,12 @@ Variaveis MIMIC-IV Demo
 | `dim_admission` | 275 | Admissoes hospitalares |
 | `dim_icustay` | 140 | Estadias em UTI |
 | `dim_nanda_domain` | 13 | Dominios NANDA-I (Taxonomia II) |
-| `mapping_nanda_evidence` | **15.677** | Evidencias classificadas (caracteristicas definidoras, condicoes associadas) |
-| `fact_nanda_hypothesis` | **732** | Hipoteses diagnosticas (407 rule_supported, 325 candidate) |
-| `fact_noc_measurement` | **501** | Indicadores NOC vinculados a hipoteses NANDA |
+| `mapping_nanda_evidence` | **25.072** | Evidencias classificadas (embeddings + limiares clinicos) |
+| `fact_nanda_hypothesis` | **838** | Hipoteses diagnosticas (todas rule_supported) |
+| `fact_noc_measurement` | **385** | Indicadores NOC vinculados a hipoteses NANDA |
 | `fact_nic_observed_proxy` | **55.233** | Proxies observaveis (medicamentos, fluidos IV) |
-| `fact_nic_recommended` | **310** | Intervencoes recomendadas por ligacao NNN |
-| `nnn_linkage_rules` | **7** | Regras NANDA-NOC-NIC documentadas com fontes |
+| `fact_nic_recommended` | **535** | Intervencoes recomendadas por ligacao NNN |
+| `nnn_linkage_rules` | **5** | Regras NANDA-NOC-NIC documentadas com fontes |
 
 ### Resultados principais
 
