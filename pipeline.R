@@ -1,3 +1,7 @@
+
+# NOTA v4.1: Este pipeline.R é mantido para compatibilidade com modo sintético.
+# O pipeline principal para dados reais é rebuild_embeddings.py
+# que implementa inferência NANDA-I por embeddings (TF-IDF + Cosine Similarity).
 # =============================================================================
 # pipeline.R - Orquestrador Principal do Pipeline de Enfermagem MIMIC-IV
 # =============================================================================
@@ -146,7 +150,7 @@ main <- function() {
   nic_raw   <- extract_nic_interventions(data)
 
   # =========================================================================
-  # ETAPA 3: Diagnósticos NANDA
+  # ETAPA 3: Hipóteses NANDA-I (modo sintetico legado)
   # =========================================================================
   step_line <- paste(rep("#", 70), collapse = "")
   message(paste0("\n", step_line))
@@ -158,7 +162,7 @@ main <- function() {
   save_nanda_results(nanda)
 
   # =========================================================================
-  # ETAPA 4: Resultados NOC
+  # ETAPA 4: Indicadores NOC (modo sintetico legado)
   # =========================================================================
   step_line <- paste(rep("#", 70), collapse = "")
   message(paste0("\n", step_line))
@@ -170,7 +174,7 @@ main <- function() {
   save_noc_results(noc)
 
   # =========================================================================
-  # ETAPA 5: Intervenções NIC
+  # ETAPA 5: Proxies NIC (modo sintetico legado)
   # =========================================================================
   step_line <- paste(rep("#", 70), collapse = "")
   message(paste0("\n", step_line))
