@@ -1,0 +1,9 @@
+outcome_id,noc_code,noc_label
+1,0802,Estado dos Sinais Vitais
+2,0601,Equilibrio Hidrico
+3,1605,Controle da Dor
+4,1101,Integridade Tissular
+5,0415,Estado Respiratorio
+6,0407,Perfusao Tissular
+7,0912,Nivel de Consciencia
+8,0208,Mobilidade

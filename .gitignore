@@ -15,16 +15,10 @@ data/raw/
 *.parquet
 
 # --- Binários gerados (banco SQLite, RDS) ---
+# NOTA: Arquivos CSV em data/ sao intencionalmente versionados
+# (export do banco de enfermagem para visualizacao publica)
 *.sqlite
 *.db
-# Permite apenas CSVs pequenos de métricas/importância no output/ml/
-output/ml/*.rds
-!output/ml/model_comparison.csv
-!output/ml/group_shap_contribution.csv
-!output/ml/group_permutation_auc.csv
-!output/ml/shap_importance.csv
-
-# --- RDS no cache ---
 output/cache/*.rds
 
 # --- Resumo expandido (não publicar no GitHub) ---
