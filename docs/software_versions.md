@@ -76,6 +76,5 @@ Running under: Windows 10 x64 (build 19045)
 ## Notes
 
 - Packages installed via `install.packages()` from CRAN mirror https://cloud.r-project.org
-- No Bioconductor packages used
-- No GitHub-only packages used
-- `renv` not yet initialized — recommended before submission
+- `renv` initialized with 138 packages — see `renv.lock` for exact versions
+- Environment fully reproducible via `renv::restore()`

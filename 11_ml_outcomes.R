@@ -75,21 +75,14 @@ nic_features <- nic[, .(
   n_nic_types = uniqueN(nic_label)
 ), by = hadm_id]
 
-# ICU features
-if (!is.null(data$icu$icustays)) {
-  icu_features <- data$icu$icustays[, .(
-    n_icu_stays = .N,
-    total_icu_los = sum(los, na.rm = TRUE)
-  ), by = hadm_id]
-} else {
-  icu_features <- NULL
-}
+# ICU features — NÃO incluídas: total_icu_los e n_icu_stays são vazamento temporal
+# (só conhecidos após o desfecho/fechamento do episódio)
+# if (!is.null(data$icu$icustays)) { ... }  # REMOVIDO por auditoria de vazamento
 
 # --- 3. Montar dataset final ------------------------------------------------
 model_data <- merge(adm, pat, by = "subject_id", all.x = TRUE)
 
 feature_list <- list(nanda_features, noc_features, nic_features)
-if (!is.null(icu_features)) feature_list <- c(feature_list, list(icu_features))
 
 for (feat in feature_list) {
   model_data <- merge(model_data, feat, by = "hadm_id", all.x = TRUE)

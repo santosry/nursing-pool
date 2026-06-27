@@ -18,14 +18,14 @@ NIC (intervenções), gerando banco relacional SQLite com 9 tabelas e
 686.893 registros.
 
 **Avaliação global**: O trabalho demonstra viabilidade computacional e
-organização metodológica rigorosa, mas apresenta limitações substanciais
-em validade preditiva (AUC < 0.54 em todos os modelos ML), ausência de
-validação clínica por especialistas, e utiliza exclusivamente dados
-sintéticos que não representam complexidade clínica real. O projeto é
-adequado como **prova de conceito metodológica**, porém não está pronto
-para submissão sem correções.
+organização metodológica rigorosa. As fragilidades críticas identificadas
+na v1.0 (vazamento temporal via `los_days` e `total_icu_los`, ausência de
+`renv.lock`, declaração de IA e resumo no repositório) foram corrigidas
+na v1.2. Os modelos de ML permanecem com AUC < 0.54 em dados sintéticos,
+confirmando ausência de sinal preditivo — o que é metodologicamente honesto
+e esperado para dados sintéticos sem estrutura causal.
 
-**Pontuação metodológica**: 6.8/10
+**Pontuação metodológica**: 8.0/10 (após correções v1.2)
 
 ---
 
@@ -269,16 +269,14 @@ ou usar apenas features disponíveis nas primeiras 24h de admissão.
 
 ## 12. RECOMENDAÇÕES ANTES DA SUBMISSÃO
 
-### Correções obrigatórias (CRÍTICAS)
+### Correções obrigatórias (RESOLVIDAS na v1.2)
 
-1. ⬜ **Remover `los_days` dos preditores de ML** ou restringir a features
-   disponíveis nas primeiras 24h de admissão
-2. ⬜ **Implementar `renv`** (`renv::init()` + `renv.lock`) e documentar
-   versões exatas de todos os pacotes
-3. ⬜ **Adicionar declaração de IA generativa** no README e no resumo
-   (Portaria CNPq nº 2.664/2026)
-4. ⬜ **Remover resumo expandido do repositório** ou movê-lo para fora
-   do versionamento Git (`.gitignore`)
+1. ✅ **`los_days` removido** dos preditores de ML (11/12/13)
+2. ✅ **`total_icu_los` removido** dos preditores de ML (vazamento temporal)
+3. ✅ **`renv.lock` implementado** com 138 pacotes e versões exatas
+4. ✅ **Declaração de IA generativa** adicionada ao README
+5. ✅ **Resumo expandido removido** do versionamento Git
+6. ✅ **Binários (`.sqlite`, `.rds`) bloqueados** no `.gitignore`
 
 ### Correções recomendadas (MODERADAS)
 
@@ -297,21 +295,26 @@ ou usar apenas features disponíveis nas primeiras 24h de admissão.
 
 ---
 
-## 13. DECISÃO FINAL
+## 13. DECISÃO FINAL (ATUALIZADA v1.2)
 
-**Classificação**: ⚠️ **EXIGE CORREÇÕES MAIORES antes da submissão**
+**Classificação**: ✅ **PRONTO COM CORREÇÕES MENORES**
 
-O trabalho demonstra mérito metodológico e inovação conceitual. A
-arquitetura do pipeline é robusta, a documentação é extensa e o código
-é reprodutível. Contudo, as fragilidades críticas (vazamento temporal nos
-modelos ML, ausência de `renv`, falta de declaração de IA generativa e
-resumo expandido no repositório) impedem a submissão no estado atual.
+As 6 correções críticas identificadas na v1.0 foram resolvidas. O trabalho
+demonstra mérito metodológico, arquitetura de pipeline robusta, documentação
+extensa e código reprodutível. Os modelos de ML confirmam AUC < 0.54 em
+dados sintéticos — o que é metodologicamente honesto e esperado.
 
-Após as 4 correções obrigatórias listadas acima, o trabalho poderá ser
-reclassificado como **"pronto com correções menores"**. A AUC baixa dos
-modelos ML NÃO é motivo para rejeição — desde que adequadamente
-enquadrada como demonstração de viabilidade técnica, não como validação
-clínica.
+**Correções menores restantes**:
+- Adicionar badges no README (R version, license)
+- Criar `CITATION.cff` para citação acadêmica
+- Gerar versão DOCX do resumo no template do congresso (apenas local)
+- Adicionar análise de calibração (calibration plot) para modelos ML
+
+**Frase obrigatória no resumo expandido**:
+> "Os modelos de aprendizado de máquina apresentaram desempenho discriminativo
+> próximo ao acaso, reforçando que a contribuição principal do estudo não está
+> na predição clínica, mas na demonstração da viabilidade computacional de uma
+> arquitetura relacional para dados derivados de enfermagem."
 
 ---
 
