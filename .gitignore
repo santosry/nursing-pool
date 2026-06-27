@@ -30,6 +30,7 @@ output/cache/*.rds
 # --- Resumo expandido (não publicar no GitHub) ---
 output/RESUMO_EXPANDIDO_*.md
 output/RESUMO_EXPANDIDO_*.pdf
+output/RESUMO_EXPANDIDO_*.docx
 
 # --- CSVs gerados com dados em nível de paciente (modo real) ---
 # (CSVs do modo sintético sem dados reais são permitidos)

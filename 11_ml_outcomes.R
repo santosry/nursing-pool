@@ -314,6 +314,56 @@ ggsave(file.path(fig_dir, "ML_AUC_Bars.pdf"), p_auc, width = 8, height = 4.5, de
 ggsave(file.path(fig_dir, "ML_AUC_Bars.png"), p_auc, width = 8, height = 4.5, dpi = 300)
 
 message(sprintf("[ML] Figuras salvas em: %s", fig_dir))
+
+# --- 9. Calibração ----------------------------------------------------------
+message("[ML] Gerando curvas de calibração...")
+
+generate_calibration_plot <- function(predictions, actual, model_name) {
+  # Agrupar predições em bins (com tratamento para valores muito homogêneos)
+  cal_data <- data.table(pred = predictions, actual = actual)
+  # Usar 5 bins fixos em vez de decis (evita erro com distribuições homogêneas)
+  breaks <- unique(quantile(predictions, probs = seq(0, 1, 0.2), na.rm = TRUE))
+  if (length(breaks) < 3) breaks <- pretty(predictions, n = 5)
+  cal_data[, bin := cut(pred, breaks = breaks, include.lowest = TRUE)]
+  cal_summary <- cal_data[, .(
+    mean_pred = mean(pred, na.rm = TRUE),
+    mean_obs = mean(actual, na.rm = TRUE),
+    n = .N
+  ), by = bin]
+  cal_summary[!is.na(bin)]
+}
+
+# Gerar calibração para cada modelo
+model_names <- c("Regressão Logística", "GLM LASSO", "Random Forest", "XGBoost")
+preds_list <- list(results$logistic$pred, results$glmnet$pred,
+                   results$ranger$pred, results$xgb$pred)
+
+cal_all <- rbindlist(lapply(seq_along(model_names), function(i) {
+  cal <- generate_calibration_plot(preds_list[[i]], test_y, model_names[i])
+  cal[, Modelo := model_names[i]]
+  cal
+}), use.names = TRUE)
+
+p_cal <- ggplot(cal_all, aes(x = mean_pred, y = mean_obs, color = Modelo)) +
+  geom_point(size = 3, alpha = 0.8) +
+  geom_line(linewidth = 0.8) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed",
+              color = "#999999", linewidth = 0.6) +
+  scale_color_manual(values = cellpress_colors$safe[1:4]) +
+  facet_wrap(~Modelo, nrow = 2) +
+  labs(
+    title = "Curvas de Calibração — Modelos Preditivos",
+    subtitle = "Probabilidade predita vs. frequência observada (por decil)",
+    x = "Probabilidade Predita Média",
+    y = "Frequência Observada",
+    caption = "Linha tracejada: calibração perfeita. Desvio indica calibração inadequada."
+  ) +
+  coord_fixed() +
+  theme_cellpress(base_size = 11)
+
+ggsave(file.path(fig_dir, "ML_Calibration.pdf"), p_cal, width = 9, height = 7, device = "pdf")
+ggsave(file.path(fig_dir, "ML_Calibration.png"), p_cal, width = 9, height = 7, dpi = 300)
+
 message("[ML] ===== FIM DA CAMADA DE MACHINE LEARNING =====")
 
 # Return results invisibly

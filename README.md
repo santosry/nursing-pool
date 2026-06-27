@@ -5,6 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![R 4.6.0](https://img.shields.io/badge/R-4.6.0-brightgreen.svg)](https://www.r-project.org/)
 [![Status: Prova de Conceito](https://img.shields.io/badge/Status-Proof%20of%20Concept-orange.svg)]()
+[![renv](https://img.shields.io/badge/renv-138%20packages-blueviolet.svg)](https://rstudio.github.io/renv/)
+[![DOI](https://img.shields.io/badge/CITATION-CFF-yellow.svg)](./CITATION.cff)
 
 > **Projeto acadêmico vinculado à revisão integrativa:** _"Modelo conceitual para estruturação de dados de enfermagem em sistemas de informação em saúde: fundamentado em terminologias padronizadas e evidências científicas."_
 
