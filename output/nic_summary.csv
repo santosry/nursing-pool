@@ -1,9 +1,0 @@
-nic_code,nic_label,n_interventions,n_patients,n_stays,interventions_per_patient
-6680,Monitorização de Sinais Vitais,1200,1,1200,1200
-2300,Administração de Medicamentos,320172,2000,1,160.1
-4200,Terapia Intravenosa,45127,2000,1200,22.6
-1400,Controle da Dor,4632,1817,1,2.5
-1056,Nutrição Enteral,11491,1996,1200,5.8
-3540,Prevenção de Úlcera por Pressão,5655,1879,1188,3
-0840,Posicionamento,793,644,583,1.2
-3180,Cuidados com Vias Aéreas,1629,1082,882,1.5
