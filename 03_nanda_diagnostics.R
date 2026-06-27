@@ -1,5 +1,5 @@
 # =============================================================================
-# 03_nanda_hypothesis.R — Hipóteses Diagnósticas NANDA-I (v4.0)
+# 03_nanda_hypothesis.R — Hipóteses Diagnósticas NANDA-I (v4.1)
 # =============================================================================
 # ATENÇÃO: Este script gera HIPÓTESES diagnósticas NANDA-I, NÃO diagnósticos
 # confirmados. O MIMIC-IV não contém registros nativos NANDA-I.

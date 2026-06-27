@@ -1,5 +1,5 @@
 # =============================================================================
-# 05_nic_proxies.R — Proxies e Recomendações NIC (v4.0)
+# 05_nic_proxies.R — Proxies e Recomendações NIC (v4.1)
 # =============================================================================
 # ATENÇÃO: Este script identifica PROXIES observáveis de intervenções
 # (medicamentos, fluidos IV) e RECOMENDAÇÕES NIC via ligação NNN.

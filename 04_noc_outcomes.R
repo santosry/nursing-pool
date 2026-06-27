@@ -1,5 +1,5 @@
 # =============================================================================
-# 04_noc_measurements.R — Indicadores NOC Operacionalizados (v4.0)
+# 04_noc_measurements.R — Indicadores NOC Operacionalizados (v4.1)
 # =============================================================================
 # ATENÇÃO: Este script operacionaliza indicadores NOC a partir de variáveis
 # clínicas do MIMIC-IV. Sinais vitais e medidas clínicas são usados como

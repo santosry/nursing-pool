@@ -1,7 +1,7 @@
 # =============================================================================
-# 06_nursing_db.R — Banco de Dados de Enfermagem (v4.0)
+# 06_nursing_db.R — Banco de Dados de Enfermagem (v4.1)
 # =============================================================================
-# ATENCAO: A estrutura correta do banco (v4.0) usa:
+# ATENCAO: A estrutura correta do banco (v4.1) usa:
 #   - mapping_nanda_evidence: evidencias clinicas classificadas
 #   - fact_nanda_hypothesis: hipoteses diagnosticas (NAO diagnosticos confirmados)
 #   - fact_noc_measurement: indicadores NOC vinculados a hipoteses
