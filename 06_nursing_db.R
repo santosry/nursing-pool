@@ -9,7 +9,7 @@
 #   - fact_nic_recommended: recomendacoes NIC via ligacao NNN
 #   - nnn_linkage_rules: regras de ligacao NANDA-NOC-NIC
 #
-# A implementacao principal em Python (rebuild_correct.py) reflete a v4.0.
+# A implementacao principal em Python (rebuild_embeddings.py) reflete a v4.1.
 # Este script R mantem compatibilidade com o modo sintetico legado.
 #   - dim_nic_intervention: tipos de intervenção NIC
 # =============================================================================
