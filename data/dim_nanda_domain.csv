@@ -1,14 +1,14 @@
-domain_id,domain_name,embedding_description
-1,Promocao da Saude,"Health promotion, wellness, self-care, health education, healthy lifestyle, preventive behaviors."
-2,Nutricao,"Nutrition, malnutrition, obesity, diabetes, electrolyte imbalance, fluid balance, enteral feeding, parenteral nutrition, nutritional deficiency, metabolism, ingestion, digestion, absorption."
-3,Eliminacao e Troca,"Elimination, urinary function, renal failure, bowel function, constipation, diarrhea, incontinence, dialysis, ostomy, gastrointestinal excretion, body wastes."
-4,Atividade/Repouso,"Cardiovascular function, circulation, respiration, oxygenation, tissue perfusion, heart failure, arrhythmia, sleep, rest, fatigue, activity intolerance, mobility, energy balance."
-5,Percepcao/Cognicao,"Cognition, attention, orientation, memory, confusion, delirium, altered mental status, coma, neurological function, encephalopathy, cognitive impairment, dementia, sensory processing."
-6,Autopercepcao,"Self-concept, self-esteem, body image, personal identity, self-awareness."
-7,Papeis e Relacionamentos,"Role performance, relationships, family dynamics, social interaction, communication, caregiving, bereavement, grief, social isolation."
-8,Sexualidade,"Sexuality, sexual identity, reproductive function, sexual dysfunction, sexually transmitted infection."
-9,Enfrentamento/Tolerancia ao Estresse,"Coping, stress response, anxiety, post-trauma, substance abuse, adjustment, resilience, fear, shock."
-10,Principios Vitais,"Spirituality, religion, values, beliefs, hope, existential distress, spiritual suffering."
-11,Seguranca/Protecao,"Infection, sepsis, immunity, risk for falls, skin integrity, wound, pressure ulcer, thermoregulation, allergy, poisoning, violence, hyperthermia, hypothermia, aspiration, safety."
-12,Conforto,"Pain, acute pain, chronic pain, nausea, discomfort, symptoms, suffering, palliative care, physical comfort, quality of life."
-13,Crescimento/Desenvolvimento,"Growth, development, developmental milestones, aging, failure to thrive, developmental delay."
+domain_id,domain_name
+1,Promocao da Saude
+2,Nutricao
+3,Eliminacao e Troca
+4,Atividade/Repouso
+5,Percepcao/Cognicao
+6,Autopercepcao
+7,Papeis e Relacionamentos
+8,Sexualidade
+9,Enfrentamento/Tolerancia ao Estresse
+10,Principios Vitais
+11,Seguranca/Protecao
+12,Conforto
+13,Crescimento/Desenvolvimento

@@ -83,11 +83,11 @@ Variaveis MIMIC-IV Demo
 
 | Metrica | Valor |
 |:---|:---|
-| Hipoteses NANDA-I derivadas | 1.616 (todas rule_supported) |
-| Evidencias classificadas | 25.072 (embeddings + limiares clinicos) |
-| Medicoes NOC vinculadas | 465 |
+| Hipoteses NANDA-I derivadas | 1.646 (todas rule_supported) |
+| Evidencias classificadas | 19.286 (keyword rules + limiares) |
+| Medicoes NOC vinculadas | 609 |
 | Proxies NIC observaveis | 55.233 |
-| Recomendacoes NIC (NNN) | 859 |
+| Recomendacoes NIC (NNN) | 491 |
 | Pacientes com cobertura NNN | 100% |
 
 ### Hipoteses NANDA por dominio
@@ -124,7 +124,7 @@ O que este projeto faz e construir uma **camada derivada de inferencia computaci
 
 ### Modo com dados reais (MIMIC-IV Demo)
 ```bash
-python3 rebuild_embeddings.py
+python3 rebuild_keywords.py
 ```
 
 ### Modo sintetico (demonstracao)
