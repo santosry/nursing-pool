@@ -83,11 +83,11 @@ Variaveis MIMIC-IV Demo
 
 | Metrica | Valor |
 |:---|:---|
-| Hipoteses NANDA-I derivadas | 732 (407 rule_supported, 325 candidate) |
-| Evidencias classificadas | 15.677 (15.208 caracteristicas definidoras, 469 condicoes associadas) |
-| Medicoes NOC vinculadas | 501 (a 4 resultados NOC distintos) |
-| Proxies NIC observaveis | 55.233 (medicamentos + fluidos IV) |
-| Recomendacoes NIC (NNN) | 310 (7 regras de ligacao) |
+| Hipoteses NANDA-I derivadas | 838 (todas rule_supported) |
+| Evidencias classificadas | 25.072 (embeddings + limiares clinicos) |
+| Medicoes NOC vinculadas | 385 |
+| Proxies NIC observaveis | 55.233 |
+| Recomendacoes NIC (NNN) | 535 |
 | Pacientes com cobertura NNN | 100% |
 
 ### Hipoteses NANDA por dominio
@@ -106,14 +106,9 @@ Variaveis MIMIC-IV Demo
 
 ### Esclarecimento metodologico fundamental
 
-O MIMIC-IV **nao contem** diagnosticos de enfermagem registrados segundo NANDA-I, resultados mensurados segundo NOC ou intervencoes codificadas segundo NIC. O MIMIC-IV e um banco de dados clinico centrado no modelo biomedico: codigos ICD-10, sinais vitais, exames laboratoriais, medicamentos administrados e balanco hidrico.
+O MIMIC-IV **nao contem** diagnosticos de enfermagem registrados segundo NANDA-I, resultados mensurados segundo NOC ou intervencoes codificadas segundo NIC. O MIMIC-IV e um banco de dados clinico centrado no modelo biomedico.
 
-O que este projeto faz e construir uma **camada derivada de inferencia computacional**:
-
-1. **Variaveis do MIMIC-IV** (sinais vitais, ICD-10, exames) sao classificadas como **evidencias parciais** (caracteristicas definidoras, condicoes associadas, fatores de risco)
-2. Essas evidencias geram **hipoteses diagnosticas NANDA-I**, nunca diagnosticos confirmados
-3. As hipoteses sao vinculadas a **indicadores NOC operacionalizados** a partir de variaveis mensuraveis
-4. **Proxies observaveis NIC** (acoes documentadas) e **recomendacoes NIC** (via ligacao NNN) completam a camada
+O que este projeto faz e construir uma **camada derivada de inferencia computacional** utilizando **TF-IDF + similaridade de cosseno** como mecanismo exploratorio de **triagem semantica** para sugerir dominios NANDA-I candidatos. A similaridade textual **nao confirma diagnostico** — apenas ranqueia candidatos. Sinais vitais anormais sao usados como caracteristicas definidoras adicionais. NENHUM diagnostico de enfermagem e confirmado.
 
 ### O que NAO e este projeto
 

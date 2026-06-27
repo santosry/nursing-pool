@@ -13,9 +13,9 @@
 # Etapas:
 #   01 - Carregamento de dados
 #   02 - Mapeamento NANDA/NOC/NIC
-#   03 - Diagnósticos NANDA
-#   04 - Resultados NOC
-#   05 - Intervenções NIC
+#   03 - Hipóteses NANDA-I
+#   04 - Indicadores NOC
+#   05 - Proxies/Recomendações NIC
 #   06 - Banco de dados de enfermagem
 #   07 - Análises estatísticas
 #   08 - Visualizações (Cell Press)
@@ -150,7 +150,7 @@ main <- function() {
   # =========================================================================
   step_line <- paste(rep("#", 70), collapse = "")
   message(paste0("\n", step_line))
-  message(" ETAPA 3/10: PROCESSAMENTO DIAGNÓSTICOS NANDA")
+  message(" ETAPA 3/10: GERAÇÃO DE HIPÓTESES NANDA-I")
   message(step_line)
 
   source(here::here("03_nanda_diagnostics.R"))
@@ -162,7 +162,7 @@ main <- function() {
   # =========================================================================
   step_line <- paste(rep("#", 70), collapse = "")
   message(paste0("\n", step_line))
-  message(" ETAPA 4/10: PROCESSAMENTO RESULTADOS NOC")
+  message(" ETAPA 4/10: INDICADORES NOC OPERACIONALIZADOS")
   message(step_line)
 
   source(here::here("04_noc_outcomes.R"))
@@ -174,7 +174,7 @@ main <- function() {
   # =========================================================================
   step_line <- paste(rep("#", 70), collapse = "")
   message(paste0("\n", step_line))
-  message(" ETAPA 5/10: PROCESSAMENTO INTERVENÇÕES NIC")
+  message(" ETAPA 5/10: PROXIES E RECOMENDAÇÕES NIC")
   message(step_line)
 
   source(here::here("05_nic_interventions.R"))
@@ -282,9 +282,9 @@ main <- function() {
   # --- Métricas finais -------------------------------------------------------
   message("\n[MÉTRICAS FINAIS]")
   message(sprintf("  Pacientes: %d", nrow(data$hosp$patients)))
-  message(sprintf("  Diagnósticos NANDA: %d", nrow(nanda)))
+  message(sprintf("  Hipóteses NANDA-I: %d", nrow(nanda)))
   message(sprintf("  Indicadores NOC: %d", nrow(noc)))
-  message(sprintf("  Intervenções NIC: %d", nrow(nic)))
+  message(sprintf("  Proxies NIC: %d", nrow(nic)))
   message(sprintf("  Banco de dados: %s", db_path))
   message(sprintf("  Auditoria: %s",
                   ifelse(audit_report$issues == 0, "APROVADO ✓", "REPROVADO ✗")))

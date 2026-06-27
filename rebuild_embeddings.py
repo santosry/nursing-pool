@@ -11,8 +11,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from datetime import datetime
 
-BASE = r'C:\Users\oorie\OneDrive\Documentos\TRABALHOS\PROVA DE CONCEITO\mimic-iv-clinical-database-demo-2.2'
-DB   = r'C:\Users\oorie\OneDrive\Documentos\TRABALHOS\PROVA DE CONCEITO\mimic_nursing_poc\output\nursing_db.sqlite'
+BASE = r'..\mimic-iv-clinical-database-demo-2.2'
+DB   = r'output\nursing_db.sqlite'
 
 def load(p):
     path = os.path.join(BASE, p)
