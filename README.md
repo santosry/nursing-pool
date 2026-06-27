@@ -3,21 +3,12 @@
 ## Prova de Conceito Computacional — Pipeline MIMIC-IV → NANDA/NOC/NIC
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![R ≥ 4.4](https://img.shields.io/badge/R-%E2%89%A5%204.4-brightgreen.svg)](https://www.r-project.org/)
-[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXX-blue.svg)](https://doi.org/)
+[![R 4.6.0](https://img.shields.io/badge/R-4.6.0-brightgreen.svg)](https://www.r-project.org/)
+[![Status: Prova de Conceito](https://img.shields.io/badge/Status-Proof%20of%20Concept-orange.svg)]()
 
 > **Projeto acadêmico vinculado à revisão integrativa:** _"Modelo conceitual para estruturação de dados de enfermagem em sistemas de informação em saúde: fundamentado em terminologias padronizadas e evidências científicas."_
 
----
-
-## ⚠️ Aviso Importante — Dados Sintéticos vs. Dados Reais
-
-> **Este pipeline NÃO inventa dados clínicos.** Os dados gerados no modo `--mode=synthetic` são **inteiramente simulados** para fins de demonstração computacional, não contendo nenhuma informação real de pacientes.
-
-| Modo | Origem dos Dados | Finalidade |
-|:---|:---|:---|
-| `synthetic` | Gerador algorítmico (`synthetic_data.R`) | Demonstração, teste, validação do pipeline |
-| `real` | MIMIC-IV via PhysioNet (acesso credenciado) | Pesquisa com dados clínicos reais |
+> **Aviso**: Este projeto é uma **prova de conceito computacional**. Os modelos preditivos aqui implementados têm AUC < 0.55 em dados sintéticos e **não são válidos para uso clínico**. NANDA-I, NIC e NOC são camadas derivadas por mapeamento exploratório — **não são registros originais do MIMIC-IV**.
 
 O **MIMIC-IV não contém registros nas classificações NANDA-I/NOC/NIC nativamente.** O pipeline faz o **mapeamento conceitual** entre dados clínicos existentes (sinais vitais, exames, medicamentos, diagnósticos ICD-10) e os conceitos das terminologias de enfermagem — exatamente a lacuna que este projeto de pesquisa visa preencher.
 
@@ -182,13 +173,41 @@ Todas as figuras seguem padrão Cell Press (Cell, Patterns, Med):
 
 ## 👥 Como Contribuir
 
-Este projeto é **open source** (MIT License). Contribuições são bem-vindas:
+---
 
-1. Fork o repositório
-2. Crie uma branch (`git checkout -b feature/nova-funcionalidade`)
-3. Commit (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Push (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
+## 🤖 Transparência e Uso de IA Generativa
+
+**Declaração conforme Portaria CNPq nº 2.664/2026**
+
+Os autores declaram que foram utilizadas ferramentas de inteligência artificial
+generativa no apoio à concepção, organização metodológica, revisão textual,
+depuração de código, geração de sugestões de auditoria e melhoria da clareza
+do manuscrito e da documentação computacional. As ferramentas utilizadas foram
+ChatGPT 5.5, DeepSeek-v4-Pro e Grok. As ferramentas não foram indicadas como
+autoras, não substituíram a interpretação científica humana, não realizaram
+coleta independente de dados e não isentam os autores da responsabilidade
+integral pelo conteúdo final, pela veracidade das informações, pela
+originalidade, pelas análises, pelas referências e por eventuais erros ou
+imprecisões.
+
+---
+
+## ⚠️ Limitações Conhecidas
+
+1. **Dados sintéticos**: Os dados do modo synthetic NÃO representam complexidade clínica real.
+   Correlações, prevalências e associações são artefatos do gerador aleatório.
+2. **Vazamento temporal**: `los_days` é usado como preditor nos modelos ML — isto é
+   metodologicamente inválido para predição prospectiva. A análise deve ser interpretada
+   como exploratória retrospectiva.
+3. **Sem validação clínica**: O mapeamento ICD-10 → NANDA-I não foi validado por
+   especialistas. NENHUM resultado deste pipeline deve ser interpretado como evidência
+   clínica.
+4. **Modelos não preditivos**: Todos os modelos ML apresentam AUC < 0.55 em dados
+   sintéticos, desempenho insuficiente para qualquer aplicação clínica.
+5. **FHIR/openEHR**: Apenas referencial teórico. O pipeline não implementa APIs FHIR
+   nem arquétipos openEHR.
+6. **Terminologias protegidas**: NANDA-I, NIC e NOC são marcas registradas. Este
+   repositório utiliza apenas identificadores e categorias resumidas de uso permitido.
 
 ---
 
@@ -203,10 +222,11 @@ MIT License — veja [LICENSE](LICENSE) para detalhes.
 Se usar este pipeline em sua pesquisa, por favor cite:
 
 ```
-@software{mimic_nursing_poc_2026,
-  title        = {Pipeline MIMIC-IV → NANDA/NOC/NIC: Prova de Conceito para Enfermagem de Precisão},
+@software{nursing_pool_2026,
+  title        = {nursing-pool: Modelo conceitual e prova de conceito computacional
+                  para estruturação de dados de enfermagem em SII com MIMIC-IV},
   year         = {2026},
-  url          = {https://github.com/seu-usuario/mimic-nursing-poc},
-  note         = {Modelo conceitual para estruturação de dados de enfermagem}
+  url          = {https://github.com/santosry/nursing-pool},
+  note         = {Prova de conceito. NÃO validado para uso clínico.}
 }
 ```
