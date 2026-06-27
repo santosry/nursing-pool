@@ -45,11 +45,11 @@ map_icd_to_nanda <- function(icd_codes) {
   dt
 }
 
-#' Extrai diagnósticos de enfermagem (NANDA) do módulo HOSP
+#' Extrai hipóteses NANDA-I do módulo HOSP
 #' Considera tanto diagnósticos médicos (ICD) quanto avaliações OMR
 extract_nanda_diagnostics <- function(data) {
 
-  message("[NANDA] Extraindo diagnósticos de enfermagem...")
+  message("[NANDA] Gerando hipóteses diagnósticas NANDA-I...")
 
   hosp <- data$hosp
   icu  <- data$icu
@@ -242,7 +242,7 @@ extract_nanda_diagnostics <- function(data) {
   # Cleanup
   all_nanda[, chartdate := NULL]
 
-  message(sprintf("[NANDA] Total de diagnósticos de enfermagem extraídos: %d", nrow(all_nanda)))
+  message(sprintf("[NANDA] Total de hipóteses diagnósticas NANDA-I derivadas: %d", nrow(all_nanda)))
 
   # Resumo por domínio
   summary <- all_nanda[, .N, by = nanda_domain][order(-N)]
@@ -392,7 +392,7 @@ extract_noc_outcomes <- function(data) {
     all_noc[, noc_id := .I]
   }
 
-  message(sprintf("[NOC] Total de indicadores de resultado extraídos: %d", nrow(all_noc)))
+  message(sprintf("[NOC] Total de indicadores NOC operacionalizados: %d", nrow(all_noc)))
   if (nrow(all_noc) > 0) {
     message("[NOC] Distribuição por resultado:")
     summary <- all_noc[, .N, by = noc_label][order(-N)]
@@ -521,7 +521,7 @@ extract_nic_interventions <- function(data) {
     all_nic[, nic_id := .I]
   }
 
-  message(sprintf("[NIC] Total de intervenções de enfermagem extraídas: %d", nrow(all_nic)))
+  message(sprintf("[NIC] Total de proxies/recomendações NIC derivadas: %d", nrow(all_nic)))
   if (nrow(all_nic) > 0) {
     message("[NIC] Distribuição por intervenção:")
     summary <- all_nic[, .N, by = nic_label][order(-N)]

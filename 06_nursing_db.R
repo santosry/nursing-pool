@@ -141,9 +141,9 @@ build_nursing_database <- function(data, nanda, noc, nic, engine = "duckdb") {
     nanda_fact[, diagnosis_id := .I]
 
     if (engine == "duckdb") {
-      dbWriteTable(con, "fact_nanda", nanda_fact, overwrite = TRUE)
+      dbWriteTable(con, "fact_nanda_hypothesis", nanda_fact, overwrite = TRUE)
     } else {
-      dbWriteTable(con, "fact_nanda", as.data.frame(nanda_fact), overwrite = TRUE)
+      dbWriteTable(con, "fact_nanda_hypothesis", as.data.frame(nanda_fact), overwrite = TRUE)
     }
     message(sprintf("[DB] fact_nanda: %d diagnósticos", nrow(nanda_fact)))
   }
@@ -158,9 +158,9 @@ build_nursing_database <- function(data, nanda, noc, nic, engine = "duckdb") {
     noc_fact[, outcome_id := .I]
 
     if (engine == "duckdb") {
-      dbWriteTable(con, "fact_noc", noc_fact, overwrite = TRUE)
+      dbWriteTable(con, "fact_noc_measurement", noc_fact, overwrite = TRUE)
     } else {
-      dbWriteTable(con, "fact_noc", as.data.frame(noc_fact), overwrite = TRUE)
+      dbWriteTable(con, "fact_noc_measurement", as.data.frame(noc_fact), overwrite = TRUE)
     }
     message(sprintf("[DB] fact_noc: %d resultados", nrow(noc_fact)))
   }
@@ -174,9 +174,9 @@ build_nursing_database <- function(data, nanda, noc, nic, engine = "duckdb") {
     nic_fact[, intervention_event_id := .I]
 
     if (engine == "duckdb") {
-      dbWriteTable(con, "fact_nic", nic_fact, overwrite = TRUE)
+      dbWriteTable(con, "fact_nic_observed_proxy", nic_fact, overwrite = TRUE)
     } else {
-      dbWriteTable(con, "fact_nic", as.data.frame(nic_fact), overwrite = TRUE)
+      dbWriteTable(con, "fact_nic_observed_proxy", as.data.frame(nic_fact), overwrite = TRUE)
     }
     message(sprintf("[DB] fact_nic: %d intervenções", nrow(nic_fact)))
   }
@@ -224,7 +224,7 @@ test_nursing_queries <- function(db_path = PATHS$db_path) {
     con <- dbConnect(SQLite(), db_path)
   }
 
-  # Query 1: Top 5 diagnósticos NANDA
+  # Query 1: Top 5 hipóteses NANDA-I
   q1 <- dbGetQuery(con, "
     SELECT nanda_domain, nanda_label, COUNT(*) as count
     FROM fact_nanda
@@ -232,7 +232,7 @@ test_nursing_queries <- function(db_path = PATHS$db_path) {
     ORDER BY count DESC
     LIMIT 5
   ")
-  message("\n[DB] Query 1 - Top 5 diagnósticos NANDA:")
+  message("\n[DB] Query 1 - Top 5 hipóteses NANDA-I:")
   print(q1)
 
   # Query 2: Pacientes com mais intervenções NIC

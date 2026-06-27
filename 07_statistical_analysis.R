@@ -1,7 +1,7 @@
 # =============================================================================
 # 07_statistical_analysis.R - Análises Estatísticas Completas
 # =============================================================================
-# Etapa 7: Análises estatísticas sobre os dados de enfermagem extraídos.
+# Etapa 7: Análises estatísticas sobre os dados de enfermagem processados.
 # Inclui:
 #   - Estatísticas descritivas com IC 95%
 #   - Testes de hipótese (qui-quadrado, Mann-Whitney, Kruskal-Wallis)
@@ -139,7 +139,7 @@ hypothesis_tests <- function(nanda, noc, nic, data) {
 
   tests <- list()
 
-  # --- Teste 1: Diferença de diagnósticos NANDA por gênero ------------------
+  # --- Teste 1: Diferença de hipóteses NANDA-I por gênero ------------------
   if (nrow(nanda) > 0 && "gender" %in% names(nanda)) {
     nanda_gender <- nanda[, .(n_patients = uniqueN(subject_id)), by = .(nanda_domain, gender)]
 
@@ -351,7 +351,7 @@ mortality_logistic <- function(nanda, data) {
     adm[, mortality := discharge_location == "DEAD/EXPIRED"]
 
     if (nrow(nanda) > 0 && "hadm_id" %in% names(nanda)) {
-      # Agregar diagnósticos por admissão
+      # Agregar hipóteses por admissão
       admission_nanda <- nanda[, .(
         n_dx = .N,
         has_nutrition = any(nanda_domain == "Nutrição"),
@@ -455,13 +455,13 @@ survival_analysis <- function(nanda, data) {
     surv_data[, dx_group := cut(n_dx, breaks = c(-1, 0, 2, 5, 100),
                                 labels = c("Nenhum", "1-2", "3-5", "6+"))]
 
-    # Kaplan-Meier por grupo de diagnósticos
+    # Kaplan-Meier por grupo de hipóteses
     km_fit <- survfit(Surv(time, event) ~ dx_group, data = surv_data)
 
     # Log-rank test
     log_rank <- survdiff(Surv(time, event) ~ dx_group, data = surv_data)
 
-    message("Kaplan-Meier: Sobrevivência por número de diagnósticos NANDA")
+    message("Kaplan-Meier: Sobrevivência por número de hipóteses NANDA-I")
     message(sprintf("Log-rank test: χ² = %.2f, df = %d, p = %.4f",
                     log_rank$chisq, length(unique(surv_data$dx_group)) - 1,
                     1 - pchisq(log_rank$chisq, length(unique(surv_data$dx_group)) - 1)))
