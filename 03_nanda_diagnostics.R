@@ -31,11 +31,13 @@ process_nanda_diagnostics <- function(nanda_data, data) {
 
   # Adicionar informações de admissão
   if (!is.null(data$hosp$admissions)) {
-    adm <- data$hosp$admissions[, .(subject_id, hadm_id, admittime, dischtime,
-                                    admission_type, discharge_location,
-                                    ethnicity, insurance)]
+    adm_cols <- intersect(c("subject_id", "hadm_id", "admittime", "dischtime",
+                            "admission_type", "discharge_location",
+                            "ethnicity", "insurance"),
+                          names(data$hosp$admissions))
+    adm <- data$hosp$admissions[, ..adm_cols]
     if ("hadm_id" %in% names(nanda_data)) {
-      nanda_data <- merge(nanda_data, adm, by = c("subject_id", "hadm_id"),
+      nanda_data <- merge(nanda_data, adm, by = intersect(c("subject_id", "hadm_id"), names(adm)),
                          all.x = TRUE)
     }
   }

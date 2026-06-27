@@ -1,13 +1,13 @@
 nanda_domain,n_patients,n_diagnoses,prevalence_pct
-Cardiovascular,1976,9280,98.8
-Conforto,1917,6348,95.8
-,1876,5422,93.8
-Segurança Proteção,1849,4991,92.4
-Atividade Repouso,1779,4457,89
-Nutrição,1772,4446,88.6
-Seguranca Protecao,1454,2609,72.7
-Nutricao,1307,2171,65.3
-Eliminação,1282,2078,64.1
-Percepcao Cognicao,1147,1672,57.4
-Eliminacao,1102,1655,55.1
-Percepção Cognição,523,616,26.1
+,100,3837,100
+Percepção Cognição,100,5358,100
+Segurança Proteção,99,3506,99
+Cardiovascular,97,9599,97
+Atividade Repouso,90,5313,90
+Nutrição,82,1204,82
+Eliminação,40,1039,40
+Nutricao,29,144,29
+Eliminacao,24,95,24
+Seguranca Protecao,24,76,24
+Percepcao Cognicao,21,53,21
+Conforto,13,44,13

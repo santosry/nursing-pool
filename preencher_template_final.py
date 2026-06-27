@@ -1,367 +1,376 @@
 # =============================================================================
-# preencher_template.py — Preenche o template CONEPE 2026 com o resumo expandido
-# preservando 100% da formatação original (fontes, margens, estilos, espaçamento)
+# preencher_template_final.py — Preenche o template CONEPE 2026 
+# com dados REAIS do MIMIC-IV Demo v2.2 (100 pacientes)
+# Formatação: Times New Roman 12, justificado, recuo 1ª linha 0.5cm,
+# sem travessões, sem ORCID, referências ABNT
 # =============================================================================
 
 from docx import Document
-from docx.shared import Pt, Inches
-import copy, os
+from docx.shared import Pt, Inches, Cm, Emu
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+import os
 
 TEMPLATE = r"C:\Users\oorie\OneDrive\Documentos\TRABALHOS\PROVA DE CONCEITO\Template_Resumo_Expandido_2026.docx"
-OUTPUT = r"C:\Users\oorie\OneDrive\Documentos\TRABALHOS\PROVA DE CONCEITO\Template_Resumo_Expandido_2026.docx"
 
 doc = Document(TEMPLATE)
 p = doc.paragraphs
 
-# =========================================================================
-# ÍNDICE 0: TÍTULO
-# =========================================================================
-p[0].text = (
+# =============================================================================
+# FUNÇÃO AUXILIAR: aplicar formatação padrão (justificado, recuo)
+# =============================================================================
+def formatar_paragrafo(par, fonte="Times New Roman", tamanho=12, negrito=False, 
+                        justificado=True, recuo_primeira_linha=False, 
+                        sublinhado=False, italico=False):
+    """Aplica formatação preservando o que já existe"""
+    for run in par.runs:
+        run.font.name = fonte
+        run.font.size = Pt(tamanho)
+        run.bold = negrito
+        run.italic = italico
+        run.underline = sublinhado
+    if justificado:
+        par.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    if recuo_primeira_linha:
+        par.paragraph_format.first_line_indent = Cm(0.5)
+    par.paragraph_format.space_after = Pt(0)
+    par.paragraph_format.space_before = Pt(0)
+
+def limpar_e_escrever(idx, texto, fonte="Times New Roman", tamanho=12, 
+                       negrito=False, recuo=False, sublinhado=False):
+    """Limpa runs existentes e escreve texto novo com formatação"""
+    par = p[idx]
+    # Preservar apenas o primeiro run, limpar o resto
+    if par.runs:
+        for run in par.runs[1:]:
+            run.text = ""
+        par.runs[0].text = texto
+        par.runs[0].font.name = fonte
+        par.runs[0].font.size = Pt(tamanho)
+        par.runs[0].bold = negrito
+        par.runs[0].underline = sublinhado
+    else:
+        run = par.add_run(texto)
+        run.font.name = fonte
+        run.font.size = Pt(tamanho)
+        run.bold = negrito
+        run.underline = sublinhado
+    par.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    if recuo:
+        par.paragraph_format.first_line_indent = Cm(0.5)
+    else:
+        par.paragraph_format.first_line_indent = Cm(0)
+
+# =============================================================================
+# TÍTULO (índice 0) — centralizado, negrito, Times New Roman 12
+# =============================================================================
+limpar_e_escrever(0, 
     "Modelo conceitual e prova de conceito computacional para estruturação "
-    "de dados de enfermagem em sistemas de informação em saúde com uso do MIMIC-IV"
+    "de dados de enfermagem em sistemas de informação em saúde com uso do MIMIC-IV",
+    negrito=True)
+p[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+# =============================================================================
+# AUTORES (índice 1) — centralizado
+# =============================================================================
+limpar_e_escrever(1, "R.P. Santos1*")
+p[1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+# =============================================================================
+# AFILIAÇÃO (índice 2) — centralizado
+# =============================================================================
+limpar_e_escrever(2, "1[Instituicao de vinculo do autor]")
+p[2].alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+# =============================================================================
+# E-MAIL (índice 3) — centralizado, sem ORCID
+# =============================================================================
+limpar_e_escrever(3, "*E-mail do autor correspondente: [email@instituicao.edu.br]")
+p[3].alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+# =============================================================================
+# RESUMO (índice 5) — parágrafo único, justificado, tamanho 11, sem recuo
+# =============================================================================
+resumo = (
+    "Este estudo propoe um modelo conceitual para estruturacao de dados de "
+    "enfermagem em sistemas de informacao em saude e desenvolve prova de conceito "
+    "computacional utilizando o MIMIC-IV Demo v2.2 (100 pacientes, 275 admissoes, "
+    "140 estadias em UTI, 668.862 registros de sinais vitais, 4.506 diagnosticos "
+    "ICD-10 e 35.835 administracoes de medicamentos) como base clinica de "
+    "demonstracao. Ressalta-se que o MIMIC-IV nao contem registros originais nas "
+    "classificacoes NANDA-I, NIC ou NOC documentados por enfermeiros [1]. O que se "
+    "constroi e uma camada derivada e exploratoria de mapeamento computacional: "
+    "variaveis clinicas existentes (sinais vitais, exames laboratoriais, codigos "
+    "ICD-10, medicamentos administrados, fluidos intravenosos) sao reorganizadas em "
+    "uma arquitetura relacional orientada pelos dominios dessas classificacoes [2,3,4]. "
+    "O pipeline em R gera banco SQLite com 9 tabelas processando dados clinicos "
+    "reais do MIMIC-IV Demo. Conclui-se que a arquitetura demonstra viabilidade "
+    "computacional para construir camada analitica de enfermagem sobre bases clinicas "
+    "biomedicas, embora requeira validacao por especialistas e testes com dados "
+    "reais de prontuario de enfermagem [5,6]."
 )
+limpar_e_escrever(5, resumo, tamanho=11)
+p[5].paragraph_format.first_line_indent = Cm(0)
 
-# =========================================================================
-# ÍNDICE 1: AUTORES
-# =========================================================================
-p[1].text = "R.P. Santos1*"
+# =============================================================================
+# PALAVRAS-CHAVE (índice 6) — justificado
+# =============================================================================
+limpar_e_escrever(6, 
+    "Palavras-chave: Informatica em Enfermagem; Terminologias Padronizadas em "
+    "Enfermagem; MIMIC-IV; Interoperabilidade; Enfermagem de Precisao.")
 
-# =========================================================================
-# ÍNDICE 2: AFILIAÇÃO
-# =========================================================================
-p[2].text = "1[Instituição de vínculo — a preencher]"
-
-# =========================================================================
-# ÍNDICE 3: E-MAIL
-# =========================================================================
-p[3].text = "*E-mail do autor correspondente: [email] | ORCID: 0009-0005-6770-2001"
-
-# =========================================================================
-# ÍNDICE 4: "Resumo" (heading — manter)
-# =========================================================================
-
-# =========================================================================
-# ÍNDICE 5: RESUMO (parágrafo único, ≤150 palavras, tamanho 11)
-# =========================================================================
-p[5].text = (
-    "Este estudo propõe um modelo conceitual para estruturação de dados de "
-    "enfermagem em sistemas de informação em saúde e desenvolve prova de conceito "
-    "computacional utilizando o MIMIC-IV como base clínica de demonstração. "
-    "Ressalta-se que o MIMIC-IV não contém registros originais nas classificações "
-    "NANDA-I, NIC ou NOC documentados por enfermeiros. O que se constrói é uma "
-    "camada derivada e exploratória de mapeamento computacional: variáveis clínicas "
-    "existentes (sinais vitais, exames laboratoriais, códigos ICD-10, medicamentos "
-    "administrados, fluidos intravenosos) são reorganizadas em uma arquitetura "
-    "relacional orientada pelos domínios dessas classificações. O pipeline em R gera "
-    "banco SQLite com 9 tabelas (dimensionais e fato) processando 686.893 registros. "
-    "Conclui-se que a arquitetura demonstra viabilidade computacional para construir "
-    "camada analítica de enfermagem sobre bases clínicas biomédicas, embora requeira "
-    "validação por especialistas e testes com dados reais de prontuário de enfermagem."
-)
-
-# =========================================================================
-# ÍNDICE 6: PALAVRAS-CHAVE
-# =========================================================================
-p[6].text = (
-    "Palavras-chave: Informática em Enfermagem; Terminologias Padronizadas em "
-    "Enfermagem; MIMIC-IV; Interoperabilidade; Enfermagem de Precisão."
-)
-
-# =========================================================================
-# ÍNDICE 7: heading vazio entre keywords e introdução — manter
-# =========================================================================
-
-# =========================================================================
-# ÍNDICE 8: 1. INTRODUÇÃO
-# =========================================================================
-# O índice 8 contém o texto da introdução
+# =============================================================================
+# 1. INTRODUÇÃO (índice 8 — cabeçalho "1. Introdução" é índice 7)
+# O texto da introdução é o índice 8
+# =============================================================================
 intro = (
-    "Os sistemas de informação em saúde evoluíram significativamente, mas grande "
-    "parte dos bancos de dados clínicos permanece centrada no registro de doenças, "
-    "exames, procedimentos, medicamentos e desfechos biomédicos [1,2]. Em "
-    "contrapartida, os dados relacionados ao processo de enfermagem — incluindo "
-    "diagnósticos, intervenções e resultados — permanecem sub-representados de forma "
-    "estruturada nos ambientes digitais, contribuindo para a invisibilidade do "
-    "trabalho da enfermagem [3,4]. A Resolução COFEN nº 736/2024 torna obrigatória "
-    "a implementação do Processo de Enfermagem em todos os serviços de saúde "
-    "brasileiros [5].\n\n"
-    "Esclarecimento metodológico fundamental: o MIMIC-IV [6] é um banco de dados "
-    "clínico de terapia intensiva que NÃO contém diagnósticos de enfermagem "
-    "registrados segundo a taxonomia NANDA-I, NÃO contém intervenções codificadas "
-    "segundo a NIC e NÃO contém resultados mensurados segundo a NOC. O MIMIC-IV "
-    "armazena dados típicos de prontuário eletrônico centrado no modelo biomédico: "
-    "códigos ICD-10 de diagnósticos médicos, sinais vitais aferidos (frequência "
-    "cardíaca, pressão arterial, SpO₂, temperatura), resultados de exames "
-    "laboratoriais (creatinina, hemoglobina, glicose, eletrólitos), registros de "
-    "administração de medicamentos (eMAR), balanço hídrico (fluidos infundidos, "
-    "débito urinário), escalas de avaliação (Glasgow, RASS, Braden) e notas "
-    "clínicas textuais. O que este estudo faz — e esta distinção é central para a "
-    "validade da proposta — é construir uma camada de inferência computacional que "
-    "reorganiza essas variáveis clínicas brutas em uma arquitetura relacional "
-    "orientada pelos 13 domínios da NANDA-I [7], pelas 7 classes da NOC [8] e "
-    "pelos 7 domínios da NIC [9].\n\n"
-    "A inferência NANDA-I opera por duas vias complementares. A primeira via mapeia "
-    "códigos ICD-10 para domínios NANDA utilizando tabela de correspondência "
-    "conceitual — por exemplo, códigos E40-E46 (desnutrição) são associados ao "
-    "domínio Nutrição, códigos I50-I51 (insuficiência cardíaca) ao domínio "
-    "Cardiovascular, e códigos A41 (sepse) e J15-J18 (pneumonia) ao domínio "
-    "Segurança/Proteção. A segunda via infere diagnósticos a partir de limiares "
-    "clínicos: taquicardia documentada (FC > 100 bpm) é mapeada para \"Risco de "
-    "débito cardíaco diminuído\", hipoxemia (SpO₂ < 92%) para \"Troca de gases "
-    "prejudicada\", GCS ≤ 8 para \"Perfusão tissular cerebral ineficaz\", Braden "
-    "≤ 12 para \"Risco de úlcera por pressão\", e dor ≥ 7/10 para \"Dor aguda\". "
-    "A inferência NOC deriva indicadores de resultado de variáveis clínicas "
-    "seriadas com cálculo de tendências temporais. A inferência NIC deriva "
-    "intervenções de registros de administração de medicamentos (eMAR → NIC 2300), "
-    "fluidos intravenosos (inputevents → NIC 4200), nutrição enteral (NIC 1056) e "
-    "procedimentos documentados (NIC 3540, 0840).\n\n"
-    "Este estudo insere-se no contexto da enfermagem de precisão e da saúde digital, "
-    "onde a ausência de dados padronizados de enfermagem limita o desenvolvimento "
-    "de ferramentas de inteligência artificial e a produção de indicadores sensíveis "
-    "à prática profissional [10,11]. A contribuição não está em \"descobrir\" "
-    "NANDA/NIC/NOC dentro do MIMIC-IV, mas em demonstrar que é computacionalmente "
-    "viável construir uma ponte metodológica entre grandes bases clínicas biomédicas "
-    "e uma ontologia operacional de enfermagem baseada em terminologias padronizadas "
-    "[12,13]."
+    "Os sistemas de informacao em saude evoluíram significativamente, mas grande "
+    "parte dos bancos de dados clinicos permanece centrada no registro de doencas, "
+    "exames, procedimentos, medicamentos e desfechos biomedicos [7,8]. Em "
+    "contrapartida, os dados relacionados ao processo de enfermagem permanecem "
+    "sub-representados de forma estruturada nos ambientes digitais, contribuindo "
+    "para a invisibilidade do trabalho da enfermagem [9,10]. A Resolucao COFEN "
+    "no 736/2024 torna obrigatoria a implementacao do Processo de Enfermagem em "
+    "todos os servicos de saude brasileiros [11].\n\n"
+    "Esclarecimento metodologico fundamental: o MIMIC-IV e um banco de dados "
+    "clinico de terapia intensiva que NAO contem diagnosticos de enfermagem "
+    "registrados segundo a taxonomia NANDA-I, NAO contem intervencoes codificadas "
+    "segundo a NIC e NAO contem resultados mensurados segundo a NOC [1]. O "
+    "MIMIC-IV armazena dados tipicos de prontuario eletronico centrado no modelo "
+    "biomedico: codigos ICD de diagnosticos medicos, sinais vitais aferidos "
+    "(frequencia cardiaca, pressao arterial, SpO2, temperatura), resultados de "
+    "exames laboratoriais, registros de administracao de medicamentos (eMAR), "
+    "balanco hidrico e escalas de avaliacao (Glasgow, RASS). O que este estudo "
+    "faz e construir uma camada de inferencia computacional que reorganiza essas "
+    "variaveis clinicas brutas em uma arquitetura relacional orientada pelos 13 "
+    "dominios da NANDA-I [2], pelas classes da NOC [3] e pelos dominios da NIC [4].\n\n"
+    "A inferencia NANDA-I opera por duas vias complementares: (i) mapeamento de "
+    "codigos ICD-10 para dominios NANDA utilizando tabela de correspondencia "
+    "conceitual (ex.: codigos E40-E46 de desnutricao associados ao dominio "
+    "Nutricao, codigos I10-I51 ao dominio Cardiovascular, codigos A41 e J15-J18 "
+    "ao dominio Seguranca/Protecao); e (ii) inferencia a partir de limiares "
+    "clinicos: taquicardia (FC > 100 bpm) mapeada para \"Risco de debito cardiaco "
+    "diminuido\", hipoxemia (SpO2 < 92%) para \"Troca de gases prejudicada\", GCS "
+    "<= 8 para \"Perfusao tissular cerebral ineficaz\", Braden <= 12 para \"Risco "
+    "de ulcera por pressao\" e dor >= 7/10 para \"Dor aguda\". A inferencia NOC "
+    "deriva indicadores de resultado de variaveis clinicas seriadas com calculo de "
+    "tendencias temporais. A inferencia NIC deriva intervencoes de registros de "
+    "administracao de medicamentos (eMAR -> NIC 2300), fluidos intravenosos "
+    "(inputevents -> NIC 4200), nutricao enteral (NIC 1056) e procedimentos "
+    "documentados (NIC 3540, 0840).\n\n"
+    "Este estudo insere-se no contexto da enfermagem de precisao e da saude digital, "
+    "onde a ausencia de dados padronizados de enfermagem limita o desenvolvimento "
+    "de ferramentas de inteligencia artificial [10,12]. A contribuicao nao esta em "
+    "\"descobrir\" NANDA/NIC/NOC dentro do MIMIC-IV, mas em demonstrar que e "
+    "computacionalmente viavel construir uma ponte metodologica entre grandes bases "
+    "clinicas biomedicas e uma ontologia operacional de enfermagem baseada em "
+    "terminologias padronizadas [13,14]."
 )
-p[8].text = intro
+limpar_e_escrever(8, intro, recuo=True)
 
-# =========================================================================
-# ÍNDICES 9-21: parágrafos de exemplo do template — limpar
-# =========================================================================
+# =============================================================================
+# LIMPAR PARÁGRAFOS DE EXEMPLO DO TEMPLATE (índices 9-21)
+# =============================================================================
 for i in [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]:
     if i < len(p):
-        p[i].text = ""
+        limpar_e_escrever(i, "")
 
-# =========================================================================
-# ÍNDICE 22: "2. Materiais e Métodos" (heading — manter)
-# =========================================================================
+# =============================================================================
+# 2. MATERIAIS E MÉTODOS
+# Índice 22: heading "2. Materiais e Métodos"
+# Índice 23: "2.1. Materiais" — limpar
+# Índice 24: texto de materiais
+# Índice 25: "2.2. Metodologia" — limpar
+# =============================================================================
+limpar_e_escrever(23, "")
+limpar_e_escrever(25, "")
 
-# =========================================================================
-# ÍNDICE 23: "2.1. Materiais" — limpar
-# =========================================================================
-p[23].text = ""
-
-# =========================================================================
-# ÍNDICE 24: texto materiais (placeholder) — substituir
-# =========================================================================
 metodos = (
-    "Trata-se de estudo de desenvolvimento metodológico com prova de conceito "
+    "Trata-se de estudo de desenvolvimento metodologico com prova de conceito "
     "computacional. O pipeline foi implementado em R 4.6.0, operando em dois modos "
-    "distintos com propósitos e restrições diferentes.\n\n"
-    "Modo sintético público: gera dados inteiramente simulados (2.000 pacientes, "
-    "3.500 admissões, 1.200 estadias em UTI) utilizando distribuições paramétricas "
-    "independentes. Este modo permite demonstração, testes automatizados e "
-    "reprodutibilidade pública via GitHub (licença MIT). Os dados simulados mimetizam "
-    "a estrutura das tabelas MIMIC-IV (chartevents, labevents, inputevents, "
-    "outputevents, emar, diagnoses_icd, prescriptions, omr, procedureevents), mas "
-    "não representam complexidade clínica real.\n\n"
-    "Modo real restrito: executável exclusivamente por usuários credenciados no "
-    "PhysioNet (https://physionet.org/content/mimiciv/) com acesso autorizado aos "
-    "arquivos CSV do MIMIC-IV v3.1. O processo de acesso exige: (a) cadastro no "
-    "PhysioNet; (b) conclusão do curso \"CITI Data or Specimens Only Research\" "
-    "com certificação válida; (c) submissão de formulário de solicitação de acesso "
-    "descrevendo o uso pretendido dos dados; (d) assinatura do Data Use Agreement "
-    "(DUA) que proíbe redistribuição dos dados e exige compromisso de não "
-    "reidentificação de pacientes. Após aprovação (tipicamente 2-5 dias úteis), "
-    "os arquivos CSV são disponibilizados para download. O pipeline é então "
-    "executado com `Rscript pipeline.R --mode=real --data_dir=/caminho/mimic-iv`. "
-    "Dados reais do MIMIC-IV JAMAIS são redistribuídos, versionados ou incluídos "
-    "no repositório público — o `.gitignore` bloqueia qualquer arquivo `.csv.gz`, "
-    "`.parquet` ou diretório `mimiciv/`, `physionet/`, `raw/`.\n\n"
-    "A arquitetura do banco adota modelo relacional implementado em SQLite (DuckDB "
-    "como alternativa de maior desempenho). As tabelas dimensionais incluem: "
-    "dim_patient (dados demográficos), dim_admission (informações de internação), "
-    "dim_icustay (estadias em UTI), dim_nanda_domain (13 domínios NANDA-I), "
-    "dim_noc_outcome (8 indicadores NOC) e dim_nic_intervention (10 categorias NIC). "
-    "As tabelas fato incluem: fact_nanda (diagnósticos inferidos — cada linha "
-    "representa uma associação entre uma admissão e um domínio NANDA, com a "
-    "evidência clínica que a originou), fact_noc (resultados derivados — cada "
-    "linha representa uma medição de indicador com valor, unidade e classificação "
-    "de anormalidade) e fact_nic (intervenções derivadas — cada linha representa "
-    "uma ação de cuidado inferida a partir de registros assistenciais).\n\n"
-    "Todas as análises foram implementadas com semente fixa (20240101) garantindo "
-    "reprodutibilidade determinística. As análises estatísticas incluíram: "
-    "estatísticas descritivas com IC 95% (método de Wilson), teste qui-quadrado "
-    "com correção de Bonferroni, teste U de Mann-Whitney, teste de Kruskal-Wallis "
-    "com post-hoc de Dunn (correção FDR), correlação de Spearman, regressão "
-    "logística multivariada e análise de Kaplan-Meier. Como etapa complementar "
-    "exploratória — sem finalidade clínica ou preditiva validada — foram testados "
-    "quatro algoritmos de aprendizado de máquina para avaliar a operacionalidade "
-    "analítica da base. O repositório público (GitHub, licença MIT) contém código, "
-    "documentação, Dockerfile, renv.lock com 138 pacotes e instruções de "
-    "reprodutibilidade, sem dados reais de pacientes."
+    "distintos com propositos e restricoes diferentes.\n\n"
+    "Modo real com MIMIC-IV Demo v2.2: a versao aberta do MIMIC-IV (PhysioNet, "
+    "https://physionet.org/content/mimic-iv-demo/2.2/) foi obtida por download "
+    "direto em formato ZIP, sem necessidade de credenciamento, curso CITI ou "
+    "assinatura de Data Use Agreement. O conjunto contem 100 pacientes "
+    "desidentificados, 275 admissoes hospitalares, 140 estadias em UTI, 668.862 "
+    "registros de sinais vitais (chartevents), 4.506 diagnosticos ICD-10, 107.727 "
+    "exames laboratoriais, 35.835 administracoes de medicamentos (eMAR), 20.404 "
+    "eventos de infusao (inputevents), 9.362 eventos de eliminacao (outputevents) "
+    "e 2.964 avaliacoes clinicas (OMR). Os dados foram baixados do diretorio "
+    "mimic-iv-clinical-database-demo-2.2 e utilizado o pipeline com a flag "
+    "--mode=real. Dados reais do MIMIC-IV JAMAIS sao redistribuidos ou versionados "
+    "no repositorio publico.\n\n"
+    "Modo sintetico publico: gera dados inteiramente simulados para demonstracao, "
+    "testes automatizados e reprodutibilidade publica via GitHub (licenca MIT), "
+    "sem conter informacao real de pacientes.\n\n"
+    "A arquitetura do banco adota modelo relacional implementado em SQLite. As "
+    "tabelas dimensionais incluem: dim_patient (dados demograficos), dim_admission "
+    "(informacoes de internacao), dim_icustay (estadias em UTI), dim_nanda_domain "
+    "(13 dominios NANDA-I), dim_noc_outcome (8 indicadores NOC) e "
+    "dim_nic_intervention (10 categorias NIC). As tabelas fato incluem: fact_nanda "
+    "(diagnosticos inferidos), fact_noc (resultados derivados) e fact_nic "
+    "(intervencoes derivadas). Cada registro em fact_nanda contem a evidencia "
+    "clinica que originou a inferencia (ICD-10, sinal vital anormal, exame "
+    "laboratorial ou avaliacao OMR).\n\n"
+    "Todas as analises foram implementadas com semente fixa (20240101) garantindo "
+    "reprodutibilidade deterministica. As analises estatisticas incluíram: "
+    "estatisticas descritivas com IC 95% (metodo de Wilson), teste qui-quadrado "
+    "com correcao de Bonferroni, teste U de Mann-Whitney, correlação de Spearman "
+    "e regressao logistica multivariada. O repositorio publico (GitHub, licenca "
+    "MIT) contem codigo, documentacao, Dockerfile, renv.lock com 138 pacotes e "
+    "instrucoes de reprodutibilidade, sem dados reais de pacientes."
 )
-p[24].text = metodos
+limpar_e_escrever(24, metodos, recuo=True)
 
-# =========================================================================
-# ÍNDICE 25: "2.2. Metodologia" — limpar
-# =========================================================================
-p[25].text = ""
-
-# =========================================================================
-# ÍNDICE 26: vazio — manter
-# =========================================================================
-
-# =========================================================================
-# ÍNDICE 27: "3. Resultados e Discussão" (heading — manter, índice 27 é o texto)
-# =========================================================================
-
-# =========================================================================
-# ÍNDICE 28: texto resultados (placeholder) — substituir
-# =========================================================================
+# =============================================================================
+# 3. RESULTADOS E DISCUSSÃO
+# =============================================================================
 resultados = (
-    "O pipeline foi executado integralmente em 34,4 segundos (modo sintético), "
-    "processando 686.893 registros em 9 tabelas, com throughput aproximado de "
-    "20.000 registros/segundo em hardware convencional. O banco SQLite gerado "
-    "(nursing_db.sqlite) possui 12,3 MB e estrutura relacional completa.\n\n"
-    "Camada NANDA-I: foram gerados 45.745 registros de diagnósticos inferidos, "
-    "distribuídos em quatro fontes de evidência: mapeamento ICD-10 (42,4%), sinais "
-    "vitais anormais (33,6%), exames laboratoriais alterados (21,3%) e avaliações "
-    "clínicas OMR (2,7%). A taxa de mapeamento ICD-10 → domínios NANDA foi de "
-    "72,0% dos códigos diagnósticos presentes na base. Os domínios mais prevalentes "
-    "foram Cardiovascular (98,8% dos pacientes), Conforto (95,8%) e "
-    "Segurança/Proteção (92,5%). A média de diagnósticos inferidos por paciente "
-    "foi de 22,9 (DP = 4,9), com média de 9,0 domínios NANDA distintos por "
-    "paciente.\n\n"
-    "Camada NOC: foram gerados 243.718 indicadores de resultado, abrangendo 12 "
-    "indicadores distintos. Os maiores percentuais de anormalidade foram observados "
-    "em frequência cardíaca (71,0% das medições acima de 100 bpm), intensidade da "
-    "dor (53,5% com NRS ≥ 7) e pressão arterial sistólica (46,9% fora dos limites "
-    "de referência). A correlação de Spearman entre o número de diagnósticos NANDA "
-    "e o número de indicadores NOC anormais foi positiva (ρ = 0,414; p < 0,0001), "
-    "sugerindo coerência estrutural entre as camadas derivadas — embora este "
-    "achado deva ser interpretado como evidência preliminar de consistência interna "
-    "do mapeamento, não como validação clínica.\n\n"
-    "Camada NIC: foram gerados 390.699 registros de intervenções derivadas, "
-    "distribuídos em 8 categorias NIC. A intervenção mais frequente foi "
-    "Administração de Medicamentos (NIC 2300, 81,9% dos registros), seguida por "
-    "Terapia Intravenosa (NIC 4200, 11,6%) e Nutrição Enteral (NIC 1056, 2,9%). "
-    "A via intravenosa foi a mais utilizada (40,0%), seguida pela via oral (30,2%).\n\n"
-    "Modelos de aprendizado de máquina: os quatro algoritmos testados — "
-    "exclusivamente para avaliar a operacionalidade analítica da base, sem "
-    "finalidade clínica — apresentaram desempenho discriminativo próximo ao acaso: "
-    "regressão logística (AUC = 0,515), GLM LASSO (AUC = 0,502), Random Forest "
-    "(AUC = 0,472) e XGBoost (AUC = 0,588). A ausência de sinal preditivo é "
-    "esperada para dados sintéticos gerados sem estrutura causal e não invalida "
-    "a prova de conceito — ao contrário, reforça que a contribuição principal do "
-    "estudo está na demonstração da viabilidade computacional da arquitetura "
-    "relacional proposta, não na capacidade preditiva dos modelos.\n\n"
-    "A principal contribuição deste estudo consiste na construção de uma ponte "
-    "metodológica entre grandes bases de dados clínicos — tradicionalmente "
-    "organizadas em torno de doenças, exames, procedimentos e medicamentos — e "
-    "uma ontologia operacional de enfermagem. Esta infraestrutura é potencialmente "
-    "aplicável a: (a) aumento da visibilidade do cuidado de enfermagem nos sistemas "
-    "de informação; (b) produção de indicadores sensíveis à prática profissional; "
-    "(c) auditoria de qualidade do cuidado; e (d) base para futuras aplicações de "
-    "inteligência artificial em enfermagem de precisão."
+    "O pipeline processou 668.862 registros de sinais vitais, 4.506 diagnosticos "
+    "ICD-10, 107.727 exames laboratoriais e 35.835 administracoes de medicamentos "
+    "do MIMIC-IV Demo (100 pacientes, 275 admissoes, 140 estadias em UTI). O banco "
+    "SQLite gerado (nursing_db.sqlite) possui estrutura relacional completa com 9 "
+    "tabelas.\n\n"
+    "Camada NANDA-I: foram gerados diagnosticos inferidos a partir de duas fontes "
+    "de evidencia principais. O mapeamento ICD-10 -> dominios NANDA obteve "
+    "cobertura de 45,3% dos codigos diagnosticos presentes na base (2.042 de 4.506 "
+    "linhas de diagnostico continham codigos com correspondencia a dominios NANDA "
+    "como Cardiovascular, Nutricao, Seguranca/Protecao, Percepcao/Cognicao e "
+    "Eliminacao). A inferencia por sinais vitais anormais produziu diagnosticos "
+    "adicionais: foram identificadas 17.292 afericoes de frequencia cardiaca (media "
+    "93 bpm), 20.272 de pressao arterial sistolica (media 98 mmHg), 15.021 de "
+    "SpO2 (media 100%), 17.359 de frequencia respiratoria (media 19 rpm) e 5.358 "
+    "de Escala de Coma de Glasgow (media 4,8). A avaliacao de dor (NRS) registrou "
+    "3.296 medicoes com media 5,2. A coorte do MIMIC-IV Demo apresentou media de "
+    "idade de 62 anos (mediana 63), com 57% de pacientes do sexo masculino e "
+    "mortalidade hospitalar de 0%.\n\n"
+    "Camada NOC: foram derivados indicadores de resultado das series temporais de "
+    "sinais vitais, com identificacao de 17.292 medicoes de frequencia cardiaca "
+    "(NOC 0802 - Estado dos Sinais Vitais), 15.021 medicoes de saturacao de "
+    "oxigenio (NOC 0415 - Estado Respiratorio) e 3.296 avaliacoes de dor (NOC "
+    "1605 - Controle da Dor).\n\n"
+    "Camada NIC: foram derivadas intervencoes dos registros de administracao de "
+    "medicamentos (NIC 2300, 35.835 administracoes de 470 farmacos distintos, "
+    "com destaque para solucao fisiologica, insulina, heparina, metoprolol e "
+    "acetaminofeno), fluidos intravenosos (NIC 4200, 20.404 eventos totalizando "
+    "3.773,5 litros infundidos) e balanco hidrico (NOC 0601, com 9.362 eventos "
+    "de debito urinario totalizando 1.319,3 litros).\n\n"
+    "A principal contribuicao deste estudo consiste na construcao de uma ponte "
+    "metodologica entre bases de dados clinicos tradicionalmente organizadas em "
+    "torno de doencas, exames e medicamentos e uma ontologia operacional de "
+    "enfermagem. A analise dos dados reais do MIMIC-IV Demo confirma que: (a) e "
+    "computacionalmente viavel extrair e reorganizar variaveis clinicas em uma "
+    "arquitetura orientada a enfermagem; (b) o mapeamento ICD-10 -> NANDA-I "
+    "alcanca cobertura significativa mesmo com a taxonomia limitada do Demo; "
+    "(c) as camadas NOC e NIC podem ser derivadas de registros clinicos existentes "
+    "sem necessidade de documentacao adicional de enfermagem. As limitacoes "
+    "incluem: amostra reduzida (100 pacientes), ausencia de mortalidade na coorte "
+    "Demo (impossibilitando analise de desfechos graves), mapeamento sem validacao "
+    "por especialistas e impossibilidade de distinguir intervencoes medicas de "
+    "intervencoes de enfermagem nos registros do MIMIC-IV."
 )
-# O índice do texto de resultados pode variar. Vamos localizar após o heading.
-resultados_heading_idx = None
-for i, para in enumerate(p):
-    if "Resultados e Discussão" in para.text and i > 25:
-        resultados_heading_idx = i
+# Localizar o parágrafo de resultados (após heading "3. Resultados e Discussão")
+for i, par in enumerate(p):
+    if "Resultados e Discuss" in par.text and i > 25:
+        r_idx = i + 1  # próximo parágrafo após o heading
+        if r_idx < len(p):
+            limpar_e_escrever(r_idx, resultados, recuo=True)
         break
 
-if resultados_heading_idx:
-    # O texto de resultados é o próximo parágrafo após o heading
-    texto_idx = resultados_heading_idx + 1
-    if texto_idx < len(p):
-        p[texto_idx].text = resultados
-
-# =========================================================================
-# ÍNDICE 29+: "4. Conclusões"
-# =========================================================================
+# =============================================================================
+# 4. CONCLUSÕES
+# =============================================================================
 conclusoes = (
-    "O objetivo foi alcançado em nível de prova de conceito. O trabalho demonstrou "
-    "viabilidade computacional de estruturar dados clínicos em uma arquitetura "
-    "relacional orientada à enfermagem, composta por 9 tabelas que organizam "
-    "diagnósticos (camada NANDA-I inferida), resultados (camada NOC derivada) e "
-    "intervenções (camada NIC derivada) como mapeamentos exploratórios a partir de "
-    "variáveis originalmente presentes em bases clínicas biomédicas. A principal "
-    "contribuição é a construção de infraestrutura metodológica para enfermagem de "
-    "precisão, oferecendo base para futuras aplicações de IA e indicadores sensíveis "
-    "à prática profissional. Reafirma-se que NANDA-I, NIC e NOC não são registros "
-    "originais do MIMIC-IV — constituem uma camada derivada, experimental e "
-    "reprodutível que necessita validação por especialistas antes de qualquer "
-    "extensão para uso assistencial."
+    "O objetivo foi alcancado em nivel de prova de conceito. O trabalho demonstrou "
+    "viabilidade computacional de estruturar dados clinicos reais do MIMIC-IV Demo "
+    "em uma arquitetura relacional orientada a enfermagem, composta por 9 tabelas "
+    "que organizam diagnosticos (camada NANDA-I inferida), resultados (camada NOC "
+    "derivada) e intervencoes (camada NIC derivada) como mapeamentos exploratorios "
+    "a partir de variaveis originalmente presentes em bases clinicas biomedicas. "
+    "A principal contribuicao e a construcao de infraestrutura metodologica para "
+    "enfermagem de precisao, oferecendo base para futuras aplicacoes e indicadores "
+    "sensíveis a pratica profissional. Reafirma-se que NANDA-I, NIC e NOC nao sao "
+    "registros originais do MIMIC-IV — constituem uma camada derivada, experimental "
+    "e reprodutível que necessita validacao por especialistas antes de qualquer "
+    "extensao para uso assistencial."
 )
-# Localizar heading "Conclusões"
-for i, para in enumerate(p):
-    if "Conclusões" in para.text and i > 30:
-        conc_heading_idx = i
-        texto_idx = i + 1
-        if texto_idx < len(p):
-            p[texto_idx].text = conclusoes
+for i, par in enumerate(p):
+    if "Conclus" in par.text and i > 30:
+        c_idx = i + 1
+        if c_idx < len(p):
+            limpar_e_escrever(c_idx, conclusoes, recuo=True)
         break
 
-# =========================================================================
-# AGRADECIMENTOS
-# =========================================================================
-for i, para in enumerate(p):
-    if "Agradecimentos" in para.text and i > 35:
-        agradecimentos_idx = i
-        if i + 1 < len(p):
-            p[i + 1].text = (
-                "Agradecimentos (a preencher conforme orientação do congresso "
-                "e agências de fomento).\n\n"
-                "Declaração de uso de IA generativa (Portaria CNPq nº 2.664/2026): "
-                "Foram utilizadas ferramentas de inteligência artificial generativa "
-                "(ChatGPT 5.5, DeepSeek-v4-Pro, Grok) no apoio à concepção, "
-                "organização metodológica, revisão textual, depuração de código e "
-                "sugestões de auditoria. As ferramentas não são autoras, não "
-                "substituíram o julgamento científico humano e não isentam os "
-                "autores da responsabilidade integral pelo conteúdo final."
-            )
+# =============================================================================
+# AGRADECIMENTOS + DECLARAÇÃO IA
+# =============================================================================
+for i, par in enumerate(p):
+    if "Agradecimentos" in par.text and i > 35:
+        ag_idx = i + 1
+        if ag_idx < len(p):
+            limpar_e_escrever(ag_idx, 
+                "Agradecimentos (a preencher conforme orientacao do congresso "
+                "e agencias de fomento).\n\n"
+                "Declaracao de uso de IA generativa (Portaria CNPq no 2.664/2026): "
+                "Foram utilizadas ferramentas de inteligencia artificial generativa "
+                "no apoio a concepcao, organizacao metodologica, revisao textual, "
+                "depuracao de codigo e sugestoes de auditoria. As ferramentas nao "
+                "sao autoras, nao substituiram o julgamento cientifico humano e "
+                "nao isentam os autores da responsabilidade integral pelo conteudo "
+                "final.", recuo=True)
         break
 
-# =========================================================================
-# REFERÊNCIAS
-# =========================================================================
-for i, para in enumerate(p):
-    if "Referências" in para.text and i > 42:
-        ref_idx = i
-        if i + 1 < len(p):
-            p[i + 1].text = (
-                "[1] SAUD, M.A. et al. Integrating genomics and digital health in "
-                "precision nursing. Saudi J. Med. Public Health, v. 1, n. 2, p. "
-                "1521-1527, 2024.\n"
-                "[2] HANTS, L.; BAIL, K.; PATERSON, C. Clinical decision-making "
-                "and the nursing process in digital health systems. J. Clin. Nurs., "
-                "v. 32, n. 19-20, p. 7010-7035, 2023.\n"
-                "[3] MICHALOWSKI, M.; TOPAZ, M.; PELTONEN, L.M. An AI-enabled "
-                "nursing future with no documentation burden. J. Adv. Nurs., v. "
-                "81, n. 1, p. 907-912, 2026.\n"
-                "[4] PORCELLATO, E. et al. Exploring applications of artificial "
-                "intelligence in critical care nursing. Nurs. Rep., v. 15, n. 2, "
-                "p. 55, 2025.\n"
-                "[5] CONSELHO FEDERAL DE ENFERMAGEM. Resolução COFEN nº 736, de "
-                "17 de janeiro de 2024. Diário Oficial da União, 2024.\n"
-                "[6] JOHNSON, A.E.W. et al. MIMIC-IV, a freely accessible "
-                "electronic health record dataset. Sci. Data, v. 10, p. 31, 2023.\n"
-                "[7] HERDMAN, T.H.; KAMITSURU, S.; LOPES, C.T. (ed.). NANDA "
-                "International nursing diagnoses: definitions and classification "
-                "2024-2026. 13. ed. New York: Thieme, 2024.\n"
-                "[8] MOORHEAD, S. et al. Nursing Outcomes Classification (NOC). "
-                "7. ed. St. Louis: Elsevier, 2024.\n"
-                "[9] BUTCHER, H.K. et al. Nursing Interventions Classification "
-                "(NIC). 8. ed. St. Louis: Elsevier, 2024.\n"
-                "[10] HE, X.; YOU, G. Precision medicine and personalized nursing "
-                "in cardiovascular disease. Front. Cardiovasc. Med., v. 12, p. "
-                "1552816, 2025.\n"
-                "[11] RODRÍGUEZ-SUÁREZ, C.A. et al. Effectiveness of a "
-                "standardized nursing process using NANDA, NIC and NOC "
-                "terminologies. Healthcare, v. 11, n. 17, p. 2449, 2023.\n"
-                "[12] BENSON, T.; GRIEVE, G. Principles of health "
-                "interoperability: FHIR, HL7 and SNOMED CT. 4. ed. Cham: "
-                "Springer, 2021.\n"
-                "[13] FREGUIA, F. et al. Nursing minimum data sets: findings from "
-                "an umbrella review. J. Adv. Nurs., v. 79, n. 4, p. 1241-1255, "
-                "2023."
-            )
+# =============================================================================
+# REFERÊNCIAS (ABNT, tamanho 10)
+# =============================================================================
+refs = (
+    "[1] JOHNSON, A.E.W. et al. MIMIC-IV, a freely accessible electronic health "
+    "record dataset. Scientific Data, v. 10, p. 31, 2023.\n"
+    "[2] HERDMAN, T.H.; KAMITSURU, S.; LOPES, C.T. (ed.). NANDA International "
+    "nursing diagnoses: definitions and classification 2024-2026. 13. ed. "
+    "New York: Thieme, 2024.\n"
+    "[3] MOORHEAD, S. et al. Nursing Outcomes Classification (NOC): measurement "
+    "of health outcomes. 7. ed. St. Louis: Elsevier, 2024.\n"
+    "[4] BUTCHER, H.K. et al. Nursing Interventions Classification (NIC). "
+    "8. ed. St. Louis: Elsevier, 2024.\n"
+    "[5] BERTOCCHI, L. et al. Impact of standardized nursing terminologies on "
+    "patient and organizational outcomes: a systematic review and meta-analysis. "
+    "Journal of Nursing Scholarship, v. 55, n. 6, p. 1126-1141, 2023.\n"
+    "[6] RODRIGUEZ-SUAREZ, C.A. et al. Effectiveness of a standardized nursing "
+    "process using NANDA, NIC and NOC terminologies: a systematic review. "
+    "Healthcare, v. 11, n. 17, p. 2449, 2023.\n"
+    "[7] SAUD, M.A. et al. Integrating genomics and digital health in precision "
+    "nursing. Saudi Journal of Medicine and Public Health, v. 1, n. 2, p. "
+    "1521-1527, 2024.\n"
+    "[8] HANTS, L.; BAIL, K.; PATERSON, C. Clinical decision-making and the "
+    "nursing process in digital health systems: an integrated systematic review. "
+    "Journal of Clinical Nursing, v. 32, n. 19-20, p. 7010-7035, 2023.\n"
+    "[9] MICHALOWSKI, M.; TOPAZ, M.; PELTONEN, L.M. An AI-enabled nursing "
+    "future with no documentation burden. Journal of Advanced Nursing, v. 81, "
+    "n. 1, p. 907-912, 2026.\n"
+    "[10] PORCELLATO, E. et al. Exploring applications of artificial intelligence "
+    "in critical care nursing: a systematic review. Nursing Reports, v. 15, n. 2, "
+    "p. 55, 2025.\n"
+    "[11] CONSELHO FEDERAL DE ENFERMAGEM. Resolucao COFEN no 736, de 17 de "
+    "janeiro de 2024. Diario Oficial da Uniao, 2024.\n"
+    "[12] HE, X.; YOU, G. Precision medicine and personalized nursing in "
+    "cardiovascular disease. Frontiers in Cardiovascular Medicine, v. 12, "
+    "p. 1552816, 2025.\n"
+    "[13] BENSON, T.; GRIEVE, G. Principles of health interoperability: FHIR, "
+    "HL7 and SNOMED CT. 4. ed. Cham: Springer, 2021.\n"
+    "[14] FREGUIA, F. et al. Nursing minimum data sets: findings from an umbrella "
+    "review. Journal of Advanced Nursing, v. 79, n. 4, p. 1241-1255, 2023."
+)
+for i, par in enumerate(p):
+    if "Referencias" in par.text and i > 42:
+        ref_idx = i + 1
+        if ref_idx < len(p):
+            limpar_e_escrever(ref_idx, refs, tamanho=10, recuo=False)
         break
 
-# Salvar
-doc.save(OUTPUT)
-print(f"✅ Template preenchido: {OUTPUT}")
-print(f"   Tamanho: {os.path.getsize(OUTPUT):,} bytes")
+# =============================================================================
+# SALVAR
+# =============================================================================
+doc.save(TEMPLATE)
+print(f"Template salvo: {TEMPLATE}")
+print(f"Tamanho: {os.path.getsize(TEMPLATE):,} bytes")
