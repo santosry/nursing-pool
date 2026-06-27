@@ -10,6 +10,8 @@
 
 > **Aviso**: Este projeto e uma **prova de conceito computacional**. NANDA-I, NIC e NOC sao camadas derivadas por mapeamento exploratorio — **nao sao registros originais do MIMIC-IV**. Nenhum resultado deste pipeline deve ser interpretado como evidencia clinica validada.
 
+> **Modelos de Machine Learning**: Todos os algoritmos implementados (XGBoost, Random Forest, GLM LASSO, Regressao Logistica) tem finalidade **exclusivamente exploratoria e retrospectiva**. Nao ha validacao prospectiva. Os modelos nao devem ser utilizados para predicao clinica. AUC < 0.60 em todos os cenarios testados.
+
 ---
 
 ## Origem dos Dados
@@ -250,3 +252,14 @@ Se usar este pipeline em sua pesquisa:
   note         = {Prova de conceito. NAO validado para uso clinico.}
 }
 ```
+
+---
+
+## Auditoria e Status
+
+- **Auditoria metodologica**: [RELATORIO_AUDITORIA_METODOLOGICA.md](docs/RELATORIO_AUDITORIA_METODOLOGICA.md)
+- **Compliance**: [compliance_report.md](docs/compliance_report.md) (gerado via `15_compliance_report.R`)
+- **Reprodutibilidade**: [reproducibility_report.md](docs/reproducibility_report.md) (gerado via `14_reproducibility_report.R`)
+- **Software versions**: [software_versions.md](docs/software_versions.md)
+
+**Status do revisor (Grok, 27/06/2026)**: Aprovado com ressalvas menores. Pronto para submissao apos correcoes minimas.
