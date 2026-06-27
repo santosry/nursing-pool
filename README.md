@@ -27,7 +27,7 @@
 
 ### Como acessar o banco de dados
 
-O banco esta em `output/nursing_db.sqlite` (SQLite, 19.7 MB).
+O banco e gerado localmente em `output/nursing_db.sqlite` (SQLite, ~13 MB) apos execucao do pipeline.
 
 **Opcao 1 — Python**:
 ```python
@@ -50,7 +50,7 @@ Acesse https://santosry.github.io/nursing-pool/ para consultar o banco com SQL d
 
 ---
 
-## Arquitetura do Banco (v4.0)
+## Arquitetura do Banco (v4.1)
 
 ### Fluxo metodologico
 
@@ -124,7 +124,7 @@ O que este projeto faz e construir uma **camada derivada de inferencia computaci
 
 ### Modo com dados reais (MIMIC-IV Demo)
 ```bash
-python3 rebuild_correct.py
+python3 rebuild_embeddings.py
 ```
 
 ### Modo sintetico (demonstracao)
