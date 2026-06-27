@@ -1,11 +1,14 @@
 # =============================================================================
-# 03_nanda_diagnostics.R - Diagnósticos de Enfermagem NANDA-I
+# 03_nanda_hypothesis.R — Hipóteses Diagnósticas NANDA-I (v4.0)
 # =============================================================================
-# Etapa 3: Extração, classificação e análise dos diagnósticos de enfermagem
-# segundo a taxonomia NANDA-I a partir dos dados MIMIC-IV.
+# ATENÇÃO: Este script gera HIPÓTESES diagnósticas NANDA-I, NÃO diagnósticos
+# confirmados. O MIMIC-IV não contém registros nativos NANDA-I.
+# As variáveis clínicas (ICD-10, sinais vitais, exames) são usadas como
+# evidências parciais para gerar hipóteses rastreáveis e auditáveis.
+# NENHUMA hipótese constitui diagnóstico de enfermagem validado.
 #
-# Ref: Herdman, T.H. et al. (2021). Nursing Diagnoses: Definitions 
-#      and Classification 2021-2023. Thieme. 12th Edition.
+# Ref: Herdman, T.H.; Kamitsuru, S.; Lopes, C.T. (2024). NANDA International
+#      Nursing Diagnoses 2024-2026. 13th ed. Thieme.
 # =============================================================================
 
 #' Processa e enriquece os diagnósticos NANDA

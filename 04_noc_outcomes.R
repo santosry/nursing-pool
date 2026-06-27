@@ -1,11 +1,13 @@
 # =============================================================================
-# 04_noc_outcomes.R - Resultados de Enfermagem NOC
+# 04_noc_measurements.R — Indicadores NOC Operacionalizados (v4.0)
 # =============================================================================
-# Etapa 4: Processamento e análise dos resultados de enfermagem (NOC)
-# extraídos do MIMIC-IV.
+# ATENÇÃO: Este script operacionaliza indicadores NOC a partir de variáveis
+# clínicas do MIMIC-IV. Sinais vitais e medidas clínicas são usados como
+# indicadores potenciais de resultado, sempre vinculados a hipóteses NANDA-I.
+# NÃO são resultados NOC documentados originalmente por enfermeiros.
 #
-# Ref: Moorhead, S. et al. (2018). Nursing Outcomes Classification (NOC),
-#      Measurement of Health Outcomes. Elsevier. 6th Edition.
+# Ref: Moorhead, S. et al. (2024). Nursing Outcomes Classification (NOC).
+#      7th ed. Elsevier.
 # =============================================================================
 
 #' Processa resultados NOC com cálculos de tendência e desfecho

@@ -1,11 +1,14 @@
 # =============================================================================
-# 05_nic_interventions.R - Intervenções de Enfermagem NIC
+# 05_nic_proxies.R — Proxies e Recomendações NIC (v4.0)
 # =============================================================================
-# Etapa 5: Processamento e análise das intervenções de enfermagem (NIC)
-# extraídas do MIMIC-IV.
+# ATENÇÃO: Este script identifica PROXIES observáveis de intervenções
+# (medicamentos, fluidos IV) e RECOMENDAÇÕES NIC via ligação NNN.
+# Medicamentos e fluidos são ações interdisciplinares, NÃO intervenções
+# NIC autônomas de enfermagem. NÃO são intervenções documentadas
+# originalmente por enfermeiros.
 #
-# Ref: Butcher, H.K. et al. (2018). Nursing Interventions Classification
-#      (NIC). Elsevier. 7th Edition.
+# Ref: Butcher, H.K. et al. (2024). Nursing Interventions Classification (NIC).
+#      8th ed. Elsevier.
 # =============================================================================
 
 #' Processa intervenções NIC com métricas de cuidado

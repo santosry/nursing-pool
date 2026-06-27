@@ -1,18 +1,16 @@
 # =============================================================================
-# 06_nursing_db.R - Construção do Banco de Dados de Enfermagem
+# 06_nursing_db.R — Banco de Dados de Enfermagem (v4.0)
 # =============================================================================
-# Etapa 6: Cria um banco de dados relacional (SQLite/DuckDB) com os dados
-# de enfermagem extraídos e processados do MIMIC-IV.
+# ATENCAO: A estrutura correta do banco (v4.0) usa:
+#   - mapping_nanda_evidence: evidencias clinicas classificadas
+#   - fact_nanda_hypothesis: hipoteses diagnosticas (NAO diagnosticos confirmados)
+#   - fact_noc_measurement: indicadores NOC vinculados a hipoteses
+#   - fact_nic_observed_proxy: proxies observaveis de intervencoes
+#   - fact_nic_recommended: recomendacoes NIC via ligacao NNN
+#   - nnn_linkage_rules: regras de ligacao NANDA-NOC-NIC
 #
-# Estrutura do banco:
-#   - dim_patient: dados demográficos
-#   - dim_admission: dados de admissão
-#   - dim_icustay: dados de UTI
-#   - fact_nanda: diagnósticos de enfermagem (fatos)
-#   - fact_noc: resultados de enfermagem (fatos)
-#   - fact_nic: intervenções de enfermagem (fatos)
-#   - dim_nanda_domain: domínios NANDA
-#   - dim_noc_outcome: indicadores NOC
+# A implementacao principal em Python (rebuild_correct.py) reflete a v4.0.
+# Este script R mantem compatibilidade com o modo sintetico legado.
 #   - dim_nic_intervention: tipos de intervenção NIC
 # =============================================================================
 
