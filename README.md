@@ -64,7 +64,7 @@ Variaveis MIMIC-IV Demo
           -> nnn_linkage_rules (regras de ligacao documentadas)
 ```
 
-### Tabelas (10 tabelas, metodologia correta)
+### Tabelas (32 tabelas: 10 de enfermagem + 22 clinicas originais)
 
 | Tabela | Registros | Funcao |
 |:---|:---|:---|
@@ -90,6 +90,34 @@ Variaveis MIMIC-IV Demo
 | Recomendacoes NIC (NNN) | 491 |
 | Pacientes com cobertura NNN | 100% |
 
+
+
+### Tabelas clinicas originais do MIMIC-IV Demo
+
+| Tabela | Registros | Conteudo |
+|:---|:---|:---|
+| labevents | 107.727 | Exames laboratoriais |
+| d_labitems | 1.622 | Referencia de exames |
+| microbiologyevents | 2.899 | Culturas microbiologicas |
+| prescriptions | 18.087 | Prescricoes medicas |
+| pharmacy | 15.306 | Farmacia |
+| emar_detail | 72.018 | Detalhes de administracao medicamentos |
+| poe | 45.154 | Ordens medicas |
+| poe_detail | 3.795 | Detalhes de ordens |
+| drgcodes | 454 | Codigos DRG |
+| hcpcsevents | 61 | Eventos HCPCS |
+| procedures_icd | 722 | Procedimentos ICD |
+| d_icd_procedures | 85.257 | Referencia procedimentos |
+| d_icd_diagnoses | 109.775 | Descricoes diagnosticos ICD |
+| d_hcpcs | 89.200 | Referencia HCPCS |
+| provider | 40.508 | Profissionais |
+| services | 319 | Servicos hospitalares |
+| transfers | 1.190 | Transferencias |
+| omr | 2.964 | Avaliacoes clinicas |
+| caregiver | 15.468 | Cuidadores UTI |
+| d_items | 4.014 | Referencia itens UTI |
+| datetimeevents | 15.280 | Eventos com data UTI |
+| ingredientevents | 25.728 | Componentes de infusao |
 ### Hipoteses NANDA por dominio
 
 | Dominio NANDA-I | Hipoteses |
