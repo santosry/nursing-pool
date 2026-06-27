@@ -6,13 +6,16 @@
 # descricoes dos dominios/classes NANDA-I para gerar hipoteses diagnosticas 
 # baseadas em similaridade semantica, nao em regras manuais arbitrarias.
 # =============================================================================
-import sqlite3, pandas as pd, numpy as np, os, json
+import sqlite3, pandas as pd, numpy as np, os, json, sys
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from datetime import datetime
 
-BASE = r'..\mimic-iv-clinical-database-demo-2.2'
-DB   = r'output\nursing_db.sqlite'
+# Import config
+from config import BASE_DIR, DB_PATH, RANDOM_SEED, THRESHOLDS, ITEM_IDS
+
+BASE = BASE_DIR
+DB   = DB_PATH
 
 def load(p):
     path = os.path.join(BASE, p)
@@ -42,19 +45,19 @@ proc       = load('icu/procedureevents.csv')
 # DEFINIR DOMINIOS NANDA-I COM DESCRICOES PARA EMBEDDING
 # =============================================================================
 NANDA_DOMAINS = [
-    ('Promocao da Saude','Consciencia sobre bem-estar e estrategias de gestao de saude. Comportamentos de saude, prevencao, autocuidado, educacao em saude, promocao de habitos saudaveis.'),
-    ('Nutricao','Ingestao, digestao, absorcao e metabolismo de nutrientes. Desnutricao, obesidade, diabetes, desequilibrio hidroeletrolitico, deficiencia nutricional, alimentacao enteral e parenteral.'),
-    ('Eliminacao e Troca','Secrecao e excrecao de residuos corporais. Funcao urinaria, funcao intestinal, insuficiencia renal, constipacao, incontinencia, dialise, ostomias.'),
-    ('Atividade/Repouso','Producao, conservacao e equilibrio de energia. Funcao cardiovascular, circulacao, respiracao, oxigenacao, atividade fisica, mobilidade, sono, repouso, fadiga, intolerancia a atividade.'),
-    ('Percepcao/Cognicao','Processamento de informacao sensorial e cognitiva. Atencao, orientacao, percepcao, cognicao, comunicacao, estado mental, confusao, delirium, alteracao neurologica, coma.'),
-    ('Autopercepcao','Consciencia sobre si mesmo. Autoestima, imagem corporal, identidade pessoal, autoconceito, papel social.'),
-    ('Papeis e Relacionamentos','Conexoes entre individuos. Relacoes familiares, papel social, comunicacao interpessoal, isolamento social, luto.'),
-    ('Sexualidade','Identidade sexual, funcao reprodutiva, atividade sexual, disfuncao sexual.'),
-    ('Enfrentamento/Tolerancia ao Estresse','Resposta a eventos estressantes. Ansiedade, estresse, enfrentamento, adaptacao, choque, trauma psicologico, abuso de substancias.'),
-    ('Principios Vitais','Principios, valores e crencas. Espiritualidade, religiao, conflito de valores, sofrimento espiritual.'),
-    ('Seguranca/Protecao','Protecao contra perigos e lesoes. Infeccao, sepse, imunidade, defesa, risco de queda, integridade da pele, feridas, termorregulacao, alergia, intoxicacao, violencia.'),
-    ('Conforto','Sensacao de bem-estar fisico, mental e social. Dor aguda, dor cronica, nausea, desconforto, sofrimento, mal-estar, sintomas fisicos.'),
-    ('Crescimento/Desenvolvimento','Aumento de dimensoes fisicas e maturacao. Desenvolvimento infantil, crescimento pondero-estatural, marcos de desenvolvimento, envelhecimento.'),
+    ('Promocao da Saude','Health promotion, wellness, self-care, health education, healthy lifestyle, preventive behaviors.'),
+    ('Nutricao','Nutrition, malnutrition, obesity, diabetes, electrolyte imbalance, fluid balance, enteral feeding, parenteral nutrition, nutritional deficiency, metabolism, ingestion, digestion, absorption.'),
+    ('Eliminacao e Troca','Elimination, urinary function, renal failure, bowel function, constipation, diarrhea, incontinence, dialysis, ostomy, gastrointestinal excretion, body wastes.'),
+    ('Atividade/Repouso','Cardiovascular function, circulation, respiration, oxygenation, tissue perfusion, heart failure, arrhythmia, sleep, rest, fatigue, activity intolerance, mobility, energy balance.'),
+    ('Percepcao/Cognicao','Cognition, attention, orientation, memory, confusion, delirium, altered mental status, coma, neurological function, encephalopathy, cognitive impairment, dementia, sensory processing.'),
+    ('Autopercepcao','Self-concept, self-esteem, body image, personal identity, self-awareness.'),
+    ('Papeis e Relacionamentos','Role performance, relationships, family dynamics, social interaction, communication, caregiving, bereavement, grief, social isolation.'),
+    ('Sexualidade','Sexuality, sexual identity, reproductive function, sexual dysfunction, sexually transmitted infection.'),
+    ('Enfrentamento/Tolerancia ao Estresse','Coping, stress response, anxiety, post-trauma, substance abuse, adjustment, resilience, fear, shock.'),
+    ('Principios Vitais','Spirituality, religion, values, beliefs, hope, existential distress, spiritual suffering.'),
+    ('Seguranca/Protecao','Infection, sepsis, immunity, risk for falls, skin integrity, wound, pressure ulcer, thermoregulation, allergy, poisoning, violence, hyperthermia, hypothermia, aspiration, safety.'),
+    ('Conforto','Pain, acute pain, chronic pain, nausea, discomfort, symptoms, suffering, palliative care, physical comfort, quality of life.'),
+    ('Crescimento/Desenvolvimento','Growth, development, developmental milestones, aging, failure to thrive, developmental delay.'),
 ]
 
 domain_descs = [d[1] for d in NANDA_DOMAINS]

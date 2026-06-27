@@ -1,7 +1,0 @@
-Dominio,Masc_%,Fem_%,Chi2,p,p_ajustado,Significativo
-Nutricao,41.8,35.7,3.52,0.0605,0.363,False
-Cardiovascular,26.1,24.0,0.46,0.4981,1.0,False
-Eliminacao,10.3,11.7,0.38,0.5374,1.0,False
-Seguranca/Protecao,8.3,13.4,6.11,0.0134,0.0804,False
-Percepcao/Cognicao,7.0,8.2,0.39,0.5323,1.0,False
-Conforto,4.4,3.5,0.39,0.533,1.0,False

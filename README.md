@@ -83,11 +83,11 @@ Variaveis MIMIC-IV Demo
 
 | Metrica | Valor |
 |:---|:---|
-| Hipoteses NANDA-I derivadas | 838 (todas rule_supported) |
+| Hipoteses NANDA-I derivadas | 1.616 (todas rule_supported) |
 | Evidencias classificadas | 25.072 (embeddings + limiares clinicos) |
-| Medicoes NOC vinculadas | 385 |
+| Medicoes NOC vinculadas | 465 |
 | Proxies NIC observaveis | 55.233 |
-| Recomendacoes NIC (NNN) | 535 |
+| Recomendacoes NIC (NNN) | 859 |
 | Pacientes com cobertura NNN | 100% |
 
 ### Hipoteses NANDA por dominio
