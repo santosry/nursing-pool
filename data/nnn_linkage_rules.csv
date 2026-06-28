@@ -1,8 +1,8 @@
-nanda_domain,noc_code,nic_code,nic_label,rule_description,source_reference,inference_method,confidence_level,limitation_note,rule_id
-Atividade/Repouso,0401,4040,Cuidados Cardiacos,Monitorizacao hemodinamica,"Moorhead et al.,2024",Keyword rules (DeepSeek-v4-Pro assisted),BAIXO,Regra derivada de literatura; requer validacao clinica,1
-Seguranca/Protecao,0800,3740,Tratamento da Febre,Monitorizacao temperatura,"Moorhead et al.,2024",Keyword rules (DeepSeek-v4-Pro assisted),BAIXO,Regra derivada de literatura; requer validacao clinica,2
-Conforto,2102,1400,Controle da Dor,Avaliacao/manejo da dor,"Moorhead et al.,2024",Keyword rules (DeepSeek-v4-Pro assisted),BAIXO,Regra derivada de literatura; requer validacao clinica,3
-Percepcao/Cognicao,0912,6440,Manejo do Delirium,Monitorizacao neurologica,"Moorhead et al.,2024",Keyword rules (DeepSeek-v4-Pro assisted),BAIXO,Regra derivada de literatura; requer validacao clinica,4
-Atividade/Repouso,0402,3320,Oxigenoterapia,Administracao O2,"Moorhead et al.,2024",Keyword rules (DeepSeek-v4-Pro assisted),BAIXO,Regra derivada de literatura; requer validacao clinica,5
-Nutricao,1004,1100,Manejo Nutricional,Suporte nutricional,"Moorhead et al.,2024",Keyword rules (DeepSeek-v4-Pro assisted),BAIXO,Regra derivada de literatura; requer validacao clinica,6
-Eliminacao e Troca,0503,0590,Manejo Eliminacao,Monitorizacao urinaria,"Moorhead et al.,2024",Keyword rules (DeepSeek-v4-Pro assisted),BAIXO,Regra derivada de literatura; requer validacao clinica,7
+rule_id,nanda_domain,noc_code,nic_code,nic_label,rule_description,source_reference,inference_method,confidence_level,limitation_note
+1,Atividade/Repouso,0401,4040,Cuidados Cardiacos,Monitorizacao hemodinamica,"Moorhead et al., 2024",literature_linkage_rule,BAIXO,Regra derivada de literatura; requer validacao clinica.
+2,Seguranca/Protecao,0800,3740,Tratamento da Febre,Monitorizacao temperatura,"Moorhead et al., 2024",literature_linkage_rule,BAIXO,Regra derivada de literatura; requer validacao clinica.
+3,Conforto,2102,1400,Controle da Dor,Avaliacao/manejo da dor,"Moorhead et al., 2024",literature_linkage_rule,BAIXO,Regra derivada de literatura; requer validacao clinica.
+4,Percepcao/Cognicao,0912,6440,Manejo do Delirium,Monitorizacao neurologica,"Moorhead et al., 2024",literature_linkage_rule,BAIXO,Regra derivada de literatura; requer validacao clinica.
+5,Atividade/Repouso,0402,3320,Oxigenoterapia,Administracao O2,"Moorhead et al., 2024",literature_linkage_rule,BAIXO,Regra derivada de literatura; requer validacao clinica.
+6,Nutricao,1004,1100,Manejo Nutricional,Suporte nutricional,"Moorhead et al., 2024",literature_linkage_rule,BAIXO,Regra derivada de literatura; requer validacao clinica.
+7,Eliminacao e Troca,0503,0590,Manejo Eliminacao,Monitorizacao urinaria,"Moorhead et al., 2024",literature_linkage_rule,BAIXO,Regra derivada de literatura; requer validacao clinica.
