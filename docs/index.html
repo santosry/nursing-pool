@@ -1,16 +1,190 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Banco de Enfermagem — nursing-pool v4.1</title>
-<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333}.header{background:#1a1a2e;color:#fff;padding:20px 30px}.header h1{font-size:1.5em}.header p{opacity:.8;font-size:.9em;margin-top:5px}.container{max-width:1200px;margin:20px auto;padding:0 20px}.query-box{background:#fff;border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.1)}.sql-input{width:100%;min-height:80px;font-family:Consolas,Monaco,monospace;font-size:.9em;padding:10px;border:1px solid #ddd;border-radius:4px;resize:vertical}.buttons{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}.btn{padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-size:.9em}.btn-primary{background:#1a73e8;color:#fff}.btn-secondary{background:#e8eaed;color:#333}.btn:hover{opacity:.9}.results{background:#fff;border-radius:8px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.1);overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.85em}th{background:#1a73e8;color:#fff;padding:8px 10px;text-align:left}td{padding:6px 10px;border-bottom:1px solid #eee}tr:hover{background:#f8f9fa}.error{color:#d93025;padding:10px;background:#fce8e6;border-radius:4px}.info{color:#555;font-size:.85em;margin-top:10px}.footer{text-align:center;padding:20px;color:#999;font-size:.8em}</style></head><body>
-<div class="header"><h1>Banco de Dados de Enfermagem — nursing-pool v4.1</h1><p>MIMIC-IV Demo v2.2 — 100 pacientes reais — 41 tabelas — Hipoteses NANDA-I derivadas</p><p style="color:#ff9800;font-weight:bold;margin-top:8px">ATENCAO: NANDA-I, NOC e NIC nao sao registros originais do MIMIC-IV. Sao camadas derivadas. Nenhum diagnostico confirmado.</p></div>
-<div class="container">
-<div class="query-box"><h2>Consulta SQL</h2><textarea class="sql-input" id="sql">SELECT * FROM fact_nanda_hypothesis LIMIT 10;</textarea><div class="buttons"><button class="btn btn-primary" onclick="exec()">Executar</button><button class="btn btn-secondary" onclick="ex(1)">Hipoteses NANDA</button><button class="btn btn-secondary" onclick="ex(2)">Evidencias</button><button class="btn btn-secondary" onclick="ex(3)">NOC vinculado</button><button class="btn btn-secondary" onclick="ex(4)">Proxies NIC</button><button class="btn btn-secondary" onclick="ex(5)">Sinais Vitais</button><button class="btn btn-secondary" onclick="ex(6)">Exames Lab</button><button class="btn btn-secondary" onclick="ex(7)">Medicamentos</button></div><div class="info" id="info">Carregando tabelas...</div></div>
-<div class="results" id="r"><h3>Resultados</h3><p style="color:#999">Execute uma consulta ou clique em um exemplo. Banco: 41 tabelas, MIMIC-IV Demo v2.2.</p></div></div>
-<div class="footer">nursing-pool v4.1 — Ryan de Paulo Santos, Kerolyne Yngredy Rodrigues Santos — MIT License<br>Dados: MIMIC-IV Demo v2.2 (PhysioNet). Hipoteses NANDA-I/NOC/NIC derivadas. NAO validado clinicamente.</div>
-<script>
-const D={};
-async function L(n){try{const r=await fetch(`https://raw.githubusercontent.com/santosry/nursing-pool/main/data/${n}.csv`);const t=await r.text();const l=t.trim().split('\n');const c=l[0].split(',');const rows=[];for(let i=1;i<l.length;i++){const v=P(l[i]);if(v.length===c.length){const o={};c.forEach((x,j)=>o[x.trim()]=v[j]);rows.push(o)}}D[n]={cols:c,rows};return true}catch(e){return false}}
-function P(l){const r=[];let c='',q=0;for(let i=0;i<l.length;i++){const ch=l[i];if(ch=='"')q=!q;else if(ch==','&&!q){r.push(c);c=''}else c+=ch}r.push(c);return r}
-async function init(){const ALL=['dim_patient','patients','dim_admission','admissions','dim_icustay','icustays','dim_nanda_domain','diagnoses_icd','chartevents','labevents','d_labitems','microbiologyevents','emar','emar_detail','prescriptions','pharmacy','poe','poe_detail','procedures_icd','d_icd_procedures','d_icd_diagnoses','d_hcpcs','hcpcsevents','drgcodes','omr','inputevents','outputevents','procedureevents','caregiver','d_items','datetimeevents','ingredientevents','provider','services','transfers','mapping_nanda_evidence','fact_nanda_hypothesis','fact_noc_measurement','fact_nic_observed_proxy','fact_nic_recommended','nnn_linkage_rules'];let n=0;for(const t of ALL){const ok=await L(t);if(ok)n++;document.querySelector('#info').textContent=n+'/'+ALL.length+' tabelas carregadas...'}document.querySelector('#info').textContent=n+' de '+ALL.length+' tabelas carregadas. Pronto para consultas SQL.'}
-function exec(){const s=document.getElementById('sql').value.trim();const su=s.toUpperCase();const r=document.getElementById('r');try{const m=su.match(/FROM\s+(\w+)/i);if(!m){r.innerHTML='<div class="error">Tabela nao encontrada. Use: SELECT * FROM nome_da_tabela LIMIT 10;</div>';return}const tn=m[1].toLowerCase();const t=Object.keys(D).find(k=>k.toLowerCase()===tn);if(!t){r.innerHTML=`<div class="error">Tabela "${m[1]}" nao encontrada. Tabelas: ${Object.keys(D).sort().join(', ')}</div>`;return}const lm=su.match(/LIMIT\s+(\d+)/i);const lim=lm?parseInt(lm[1]):50;const rows=D[t].rows.slice(0,lim);let h='<h3>'+t+' ('+rows.length+' de '+D[t].rows.length+' linhas)</h3><table><thead><tr>';D[t].cols.forEach(c=>h+=`<th>${c}</th>`);h+='</tr></thead><tbody>';rows.forEach(row=>{h+='<tr>';D[t].cols.forEach(c=>{h+=`<td>${String(row[c]||'').substring(0,120)}</td>`});h+='</tr>'});h+='</tbody></table>';r.innerHTML=h}catch(e){r.innerHTML=`<div class="error">${e.message}</div>`}}
-function ex(n){const e={1:'SELECT nanda_domain, COUNT(*) as n FROM fact_nanda_hypothesis GROUP BY nanda_domain ORDER BY n DESC;',2:'SELECT evidence_category, COUNT(*) as n FROM mapping_nanda_evidence GROUP BY evidence_category ORDER BY n DESC;',3:'SELECT noc_label, indicator, COUNT(*) as n FROM fact_noc_measurement GROUP BY noc_label, indicator ORDER BY n DESC;',4:'SELECT nic_label_proxy, COUNT(*) as n FROM fact_nic_observed_proxy GROUP BY nic_label_proxy ORDER BY n DESC;',5:'SELECT itemid, COUNT(*) as n FROM chartevents GROUP BY itemid ORDER BY n DESC LIMIT 10;',6:'SELECT l.itemid, d.label, ROUND(AVG(l.valuenum),1) as media, COUNT(*) as n FROM labevents l JOIN d_labitems d ON l.itemid=d.itemid WHERE l.valuenum IS NOT NULL GROUP BY l.itemid ORDER BY n DESC LIMIT 10;',7:'SELECT medication, COUNT(*) as n FROM emar GROUP BY medication ORDER BY n DESC LIMIT 10;'};document.getElementById('sql').value=e[n]||'';exec()}
-init();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nursing-pool | Banco de Enfermagem</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f6f7f9;color:#24292f;line-height:1.45}
+    header{background:#102033;color:#fff;padding:22px 30px;border-bottom:4px solid #2c8f7b}
+    header h1{font-size:1.55rem;font-weight:700}
+    header p{margin-top:6px;color:#d7dee8;font-size:.94rem}
+    .method-note{margin-top:12px;padding:10px 12px;background:#fff3cd;color:#4d3800;border-left:4px solid #e0a800;max-width:1100px}
+    main{max-width:1220px;margin:22px auto;padding:0 20px}
+    .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:18px}
+    .card{background:#fff;border:1px solid #d8dee4;border-radius:8px;padding:14px}
+    .card strong{display:block;color:#102033;font-size:.92rem}
+    .card span{display:block;margin-top:4px;color:#57606a;font-size:.86rem}
+    .query-box,.results{background:#fff;border:1px solid #d8dee4;border-radius:8px;padding:18px;margin-bottom:18px}
+    h2{font-size:1.1rem;margin-bottom:10px}
+    textarea{width:100%;min-height:92px;font-family:Consolas,Monaco,monospace;font-size:.92rem;padding:10px;border:1px solid #c9d1d9;border-radius:6px;resize:vertical}
+    .buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    button{border:1px solid #c9d1d9;border-radius:6px;background:#f6f8fa;color:#24292f;padding:8px 12px;cursor:pointer}
+    button.primary{background:#0969da;border-color:#0969da;color:#fff}
+    button:hover{filter:brightness(.97)}
+    .info{margin-top:10px;color:#57606a;font-size:.86rem}
+    .error{padding:10px;background:#ffebe9;color:#82071e;border-radius:6px}
+    .results{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.85rem}
+    th{background:#0969da;color:#fff;text-align:left;padding:8px}
+    td{border-bottom:1px solid #d8dee4;padding:7px;vertical-align:top}
+    tr:hover{background:#f6f8fa}
+    footer{text-align:center;color:#6e7781;font-size:.82rem;padding:24px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>nursing-pool | Banco de Enfermagem derivado do MIMIC-IV Demo</h1>
+    <p>Mapeamento hibrido: palavras-chave clinicas + fallback semantico por Transformer biomedico.</p>
+    <div class="method-note">
+      NANDA-I, NOC e NIC sao camadas derivadas por inferencia computacional, nao registros nativos do MIMIC-IV. Nenhuma saida representa diagnostico NANDA-I confirmado.
+    </div>
+  </header>
+
+  <main>
+    <section class="summary">
+      <div class="card"><strong>Metodo</strong><span>Regras clinicas primeiro; Transformer apenas no fallback semantico.</span></div>
+      <div class="card"><strong>Auditoria</strong><span>`semantic_score`, `model_name` e `rank_position` nas evidencias.</span></div>
+      <div class="card"><strong>Candidatos</strong><span>`mapping_nanda_candidates` preserva top-k por descricao ICD.</span></div>
+      <div class="card"><strong>Escopo</strong><span>Camada exploratoria nao validada clinicamente.</span></div>
+    </section>
+
+    <section class="query-box">
+      <h2>Consulta SQL simples</h2>
+      <textarea id="sql">SELECT * FROM mapping_nanda_evidence LIMIT 10;</textarea>
+      <div class="buttons">
+        <button class="primary" onclick="execQuery()">Executar</button>
+        <button onclick="example(1)">Evidencias NANDA</button>
+        <button onclick="example(2)">Candidatos Transformer</button>
+        <button onclick="example(3)">Hipoteses</button>
+        <button onclick="example(4)">NOC</button>
+        <button onclick="example(5)">NIC proxies</button>
+        <button onclick="example(6)">ICD</button>
+        <button onclick="example(7)">Sinais vitais</button>
+      </div>
+      <div class="info" id="info">Carregando CSVs...</div>
+    </section>
+
+    <section class="results" id="results">
+      <h2>Resultados</h2>
+      <p class="info">Execute uma consulta ou escolha um exemplo.</p>
+    </section>
+  </main>
+
+  <footer>
+    nursing-pool | MIMIC-IV Demo v2.2 | Hipoteses NANDA-I/NOC/NIC derivadas por inferencia computacional, nao validadas clinicamente.
+  </footer>
+
+  <script>
+    const DB = {};
+    const TABLES = [
+      "dim_patient","patients","dim_admission","admissions","dim_icustay","icustays",
+      "dim_nanda_domain","diagnoses_icd","d_icd_diagnoses","chartevents","labevents",
+      "d_labitems","microbiologyevents","emar","emar_detail","prescriptions","pharmacy",
+      "poe","poe_detail","procedures_icd","d_icd_procedures","d_hcpcs","hcpcsevents",
+      "drgcodes","omr","inputevents","outputevents","procedureevents","caregiver",
+      "d_items","datetimeevents","ingredientevents","provider","services","transfers",
+      "mapping_nanda_evidence","mapping_nanda_candidates","fact_nanda_hypothesis",
+      "fact_noc_measurement","fact_nic_observed_proxy","fact_nic_recommended",
+      "nnn_linkage_rules"
+    ];
+
+    function parseCsvLine(line){
+      const out=[]; let cur=""; let quoted=false;
+      for(let i=0;i<line.length;i++){
+        const ch=line[i];
+        if(ch === '"'){
+          if(quoted && line[i+1] === '"'){ cur += '"'; i++; }
+          else quoted = !quoted;
+        }else if(ch === "," && !quoted){
+          out.push(cur); cur="";
+        }else cur += ch;
+      }
+      out.push(cur);
+      return out;
+    }
+
+    async function loadTable(name){
+      const url = `https://raw.githubusercontent.com/santosry/nursing-pool/main/data/${name}.csv`;
+      const response = await fetch(url);
+      if(!response.ok) return false;
+      const text = await response.text();
+      const lines = text.trim().split(/\r?\n/);
+      if(lines.length === 0) return false;
+      const cols = parseCsvLine(lines[0]).map(c => c.trim());
+      const rows = [];
+      for(let i=1;i<lines.length;i++){
+        const values = parseCsvLine(lines[i]);
+        if(values.length !== cols.length) continue;
+        const row = {};
+        cols.forEach((col, idx) => row[col] = values[idx]);
+        rows.push(row);
+      }
+      DB[name] = {cols, rows};
+      return true;
+    }
+
+    async function init(){
+      let loaded = 0;
+      for(const table of TABLES){
+        try{ if(await loadTable(table)) loaded++; }catch(e){}
+        document.querySelector("#info").textContent = `${loaded}/${TABLES.length} tabelas carregadas...`;
+      }
+      document.querySelector("#info").textContent = `${loaded} de ${TABLES.length} tabelas carregadas.`;
+    }
+
+    function tableFromSql(sql){
+      const match = sql.match(/FROM\s+([A-Za-z0-9_]+)/i);
+      return match ? match[1].toLowerCase() : null;
+    }
+
+    function limitFromSql(sql){
+      const match = sql.match(/LIMIT\s+(\d+)/i);
+      return match ? Math.max(1, parseInt(match[1], 10)) : 50;
+    }
+
+    function execQuery(){
+      const sql = document.querySelector("#sql").value.trim();
+      const target = tableFromSql(sql);
+      const panel = document.querySelector("#results");
+      if(!target){
+        panel.innerHTML = '<div class="error">Use uma consulta no formato SELECT * FROM nome_da_tabela LIMIT 10.</div>';
+        return;
+      }
+      const table = Object.keys(DB).find(name => name.toLowerCase() === target);
+      if(!table){
+        panel.innerHTML = `<div class="error">Tabela "${target}" nao encontrada. Disponiveis: ${Object.keys(DB).sort().join(", ")}</div>`;
+        return;
+      }
+      const rows = DB[table].rows.slice(0, limitFromSql(sql));
+      let html = `<h2>${table} (${rows.length} de ${DB[table].rows.length} linhas)</h2><table><thead><tr>`;
+      DB[table].cols.forEach(col => html += `<th>${col}</th>`);
+      html += "</tr></thead><tbody>";
+      rows.forEach(row => {
+        html += "<tr>";
+        DB[table].cols.forEach(col => html += `<td>${String(row[col] || "").slice(0, 140)}</td>`);
+        html += "</tr>";
+      });
+      html += "</tbody></table>";
+      panel.innerHTML = html;
+    }
+
+    function example(id){
+      const examples = {
+        1: "SELECT subject_id, hadm_id, nanda_domain, semantic_score, inference_method, model_name, rank_position FROM mapping_nanda_evidence LIMIT 20;",
+        2: "SELECT icd_code, icd_description, candidate_domain, similarity_score, rank_position, model_name, accepted_as_top1 FROM mapping_nanda_candidates LIMIT 20;",
+        3: "SELECT nanda_domain, status, best_semantic_score, inference_method FROM fact_nanda_hypothesis LIMIT 20;",
+        4: "SELECT noc_label, indicator, baseline_value, followup_value, limitation FROM fact_noc_measurement LIMIT 20;",
+        5: "SELECT nic_label_proxy, action_type, limitation FROM fact_nic_observed_proxy LIMIT 20;",
+        6: "SELECT * FROM diagnoses_icd LIMIT 20;",
+        7: "SELECT subject_id, hadm_id, itemid, valuenum FROM chartevents LIMIT 20;"
+      };
+      document.querySelector("#sql").value = examples[id] || "";
+      execQuery();
+    }
+
+    init();
+  </script>
+</body>
+</html>

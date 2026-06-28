@@ -1,223 +1,150 @@
-# nursing-pool — Modelo Conceitual para Dados de Enfermagem em SII
+# nursing-pool
 
-## Prova de Conceito Computacional — Camada Derivada NANDA-I/NOC/NIC a partir do MIMIC-IV Demo
+## Prova de conceito computacional para camada derivada NANDA-I/NOC/NIC a partir do MIMIC-IV Demo
 
 **Autores:** Ryan de Paulo Santos, Kerolyne Yngredy Rodrigues Santos
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![R 4.6.0](https://img.shields.io/badge/R-4.6.0-brightgreen.svg)](https://www.r-project.org/)
-[![Status: Prova de Conceito](https://img.shields.io/badge/Status-Proof%20of%20Concept-orange.svg)]()
-[![renv](https://img.shields.io/badge/renv-138%20packages-blueviolet.svg)](https://rstudio.github.io/renv/)
-[![CITATION](https://img.shields.io/badge/CITATION-CFF-yellow.svg)](./CITATION.cff)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Status: Proof of Concept](https://img.shields.io/badge/Status-Proof%20of%20Concept-orange.svg)]()
 
-> **AVISO METODOLÓGICO**: NANDA-I, NOC e NIC não são registros originais do MIMIC-IV. São camadas derivadas por mapeamento exploratório para prova de conceito, sem validação clínica. Nenhuma hipótese deste banco constitui diagnóstico de enfermagem confirmado.
+> **Aviso metodologico:** NANDA-I, NOC e NIC nao sao registros nativos do MIMIC-IV. Este projeto gera uma camada exploratoria por inferencia computacional. As saidas sao triagem semantica de hipoteses NANDA-I derivadas, nao diagnosticos de enfermagem confirmados, e nao foram validadas clinicamente.
 
----
+## Acesso
 
-## Como Acessar os Dados
+- Site SQL estatico: https://santosry.github.io/nursing-pool/
+- CSVs publicados: https://github.com/santosry/nursing-pool/tree/main/data
+- Codigo-fonte: https://github.com/santosry/nursing-pool
 
-### Opção 1 — Página Web SQL (navegador, sem instalação)
+## Metodo principal
 
-Acesse **https://santosry.github.io/nursing-pool/** para consultar o banco com SQL diretamente no navegador. A página carrega as 41 tabelas e oferece botões de exemplos prontos. Nenhuma instalação necessária.
+O pipeline real principal e `rebuild_transformer_embeddings.py`.
 
-### Opção 2 — Visualizar CSVs (GitHub)
+O metodo atual e hibrido:
 
-Todos os CSVs estão disponíveis em: https://github.com/santosry/nursing-pool/tree/main/data
+1. **Palavras-chave clinicas:** primeira camada de alta precisao para descricoes ICD com sinais semanticos diretos, como sepse, pneumonia, insuficiencia renal, dor, diabetes ou trauma.
+2. **Fallback por Transformer biomedico:** para descricoes ICD sem match por regra, o script gera embeddings da descricao ICD e das descricoes resumidas dos dominios NANDA-I, calcula similaridade por cosseno e seleciona o top-1. O top-k tambem e salvo para auditoria.
 
-Clique em qualquer arquivo `.csv` para visualizar a tabela diretamente no GitHub.
+O Transformer substitui o antigo fallback por TF-IDF apenas na etapa de similaridade semantica. Regras por palavras-chave, limiares clinicos de sinais vitais e camadas NOC/NIC derivadas continuam separados e auditaveis.
 
-### Opção 3 — Baixar o banco SQLite
+Modelo padrao:
 
-O banco SQLite é gerado localmente após execução do pipeline. Para recriá-lo:
+```text
+pritamdeka/S-BioBERT-snli-multinli-stsb
+```
+
+O script usa `sentence-transformers` quando possivel. Se o modelo escolhido nao for diretamente compativel, usa `transformers` + `torch` com pooling medio.
+
+## Reproducao local
 
 ```bash
 git clone https://github.com/santosry/nursing-pool.git
 cd nursing-pool
+pip install -r requirements.txt
 
-# Baixar MIMIC-IV Demo de https://physionet.org/content/mimic-iv-demo/2.2/
-# Extrair para ../mimic-iv-clinical-database-demo-2.2/
+# Baixe o MIMIC-IV Demo v2.2 e extraia ao lado do repositorio:
+# ../mimic-iv-clinical-database-demo-2.2/
 
-# Gerar camada NANDA-NOC-NIC
-python3 rebuild_keywords.py
-
-# Adicionar tabelas clínicas
-python3 add_clinical_tables.py
+python rebuild_transformer_embeddings.py
 ```
 
-Depois abra `output/nursing_db.sqlite` com:
-- **Python**: `import sqlite3; con = sqlite3.connect("output/nursing_db.sqlite")`
-- **R**: `library(DBI); library(RSQLite); con <- dbConnect(SQLite(), "output/nursing_db.sqlite")`
-- **DB Browser for SQLite** (grátis): https://sqlitebrowser.org/
-
-### Opção 4 — Modo sintético R (demonstração)
+Opcoes uteis:
 
 ```bash
-Rscript pipeline.R --mode=synthetic
+python rebuild_transformer_embeddings.py --base-dir ../mimic-iv-clinical-database-demo-2.2
+python rebuild_transformer_embeddings.py --model-name pritamdeka/S-BioBERT-snli-multinli-stsb
+python rebuild_transformer_embeddings.py --top-k 5
 ```
 
----
+O pipeline gera:
 
-## Origem dos Dados
+- `output/nursing_db.sqlite`
+- `data/*.csv`, usados pelo site estatico
 
-### MIMIC-IV Demo v2.2 (dados reais, acesso livre)
+O arquivo `rebuild_keywords.py` permanece apenas como wrapper de compatibilidade e chama o novo pipeline. O `pipeline.R` e legado para modo sintetico; em `--mode=real`, delega ao pipeline Python com Transformer.
 
-- **URL**: https://physionet.org/content/mimic-iv-demo/2.2/
-- **Download**: Arquivo ZIP com diretórios `hosp/` e `icu/`, tabelas em `.csv.gz`
-- **Conteúdo**: 100 pacientes desidentificados, 275 admissões, 140 estadias em UTI
-- **Acesso**: Livre, sem credenciamento, curso CITI ou Data Use Agreement
+## Tabelas principais
 
----
-
-## Arquitetura do Banco (v4.1)
-
-### Fluxo metodológico
-
-```
-Variáveis do MIMIC-IV Demo
-  -> Palavras-chave médicas + TF-IDF (triagem semântica)
-    -> mapping_nanda_evidence (evidências clínicas classificadas)
-      -> fact_nanda_hypothesis (hipóteses diagnósticas NANDA-I)
-        -> fact_noc_measurement (indicadores NOC vinculados)
-          -> fact_nic_observed_proxy (proxies observáveis)
-          -> fact_nic_recommended (recomendações por ligação NNN)
-            -> nnn_linkage_rules (regras de ligação documentadas)
-```
-
-### Tabelas (41 tabelas: 10 de enfermagem + 31 clínicas)
-
-| Tabela | Registros | Função |
-|:---|:---|:---|
-| `dim_patient` | 100 | Pacientes (57 M, 43 F, idade média 62) |
-| `dim_admission` | 275 | Admissões hospitalares |
-| `dim_icustay` | 140 | Estadias em UTI |
-| `dim_nanda_domain` | 13 | Domínios NANDA-I (Taxonomia II) |
-| `mapping_nanda_evidence` | 19.286 | Evidências classificadas (keyword + limiares) |
-| `fact_nanda_hypothesis` | 1.646 | Hipóteses diagnósticas (todas rule_supported) |
-| `fact_noc_measurement` | 609 | Indicadores NOC vinculados a hipóteses |
-| `fact_nic_observed_proxy` | 55.233 | Proxies observáveis (medicamentos, fluidos IV) |
-| `fact_nic_recommended` | 491 | Intervenções recomendadas por ligação NNN |
-| `nnn_linkage_rules` | 7 | Regras NANDA-NOC-NIC documentadas |
-
-### Tabelas clínicas originais do MIMIC-IV Demo
-
-| Tabela | Registros | Conteúdo |
-|:---|:---|:---|
-| `chartevents` | 668.862 | Sinais vitais e avaliações |
-| `labevents` | 107.727 | Exames laboratoriais |
-| `d_labitems` | 1.622 | Referência de exames |
-| `microbiologyevents` | 2.899 | Culturas microbiológicas |
-| `emar` | 35.835 | Administração de medicamentos |
-| `emar_detail` | 72.018 | Detalhes de administração |
-| `prescriptions` | 18.087 | Prescrições médicas |
-| `pharmacy` | 15.306 | Farmácia |
-| `poe` | 45.154 | Ordens médicas (Provider Order Entry) |
-| `poe_detail` | 3.795 | Detalhes de ordens |
-| `diagnoses_icd` | 4.506 | Diagnósticos ICD-10 |
-| `d_icd_diagnoses` | 109.775 | Descrições de diagnósticos ICD |
-| `procedures_icd` | 722 | Procedimentos ICD |
-| `d_icd_procedures` | 85.257 | Referência de procedimentos |
-| `hcpcsevents` | 61 | Eventos HCPCS |
-| `d_hcpcs` | 89.200 | Referência HCPCS |
-| `drgcodes` | 454 | Códigos DRG |
-| `inputevents` | 20.404 | Fluidos intravenosos |
-| `outputevents` | 9.362 | Débito urinário |
-| `procedureevents` | 1.468 | Procedimentos em UTI |
-| `ingredientevents` | 25.728 | Componentes de infusão |
-| `datetimeevents` | 15.280 | Eventos com data em UTI |
-| `caregiver` | 15.468 | Cuidadores UTI |
-| `d_items` | 4.014 | Referência de itens UTI |
-| `omr` | 2.964 | Avaliações clínicas (Online Medical Record) |
-| `patients` | 100 | Dados originais de pacientes |
-| `admissions` | 275 | Dados originais de admissões |
-| `icustays` | 140 | Dados originais de UTI |
-| `services` | 319 | Serviços hospitalares |
-| `transfers` | 1.190 | Transferências |
-| `provider` | 40.508 | Profissionais de saúde |
-
-### Resultados principais
-
-| Métrica | Valor |
+| Tabela | Finalidade |
 |:---|:---|
-| Hipóteses NANDA-I derivadas | 1.646 (todas rule_supported) |
-| Evidências classificadas | 19.286 (keyword rules + limiares) |
-| Medições NOC vinculadas | 609 |
-| Proxies NIC observáveis | 55.233 |
-| Recomendações NIC (NNN) | 491 |
-| Cobertura keyword | 59,3% dos códigos ICD |
+| `dim_patient` | Dimensao derivada de pacientes |
+| `dim_admission` | Dimensao derivada de admissoes |
+| `dim_icustay` | Dimensao derivada de estadias em UTI |
+| `dim_nanda_domain` | Dominios NANDA-I resumidos |
+| `mapping_nanda_evidence` | Evidencias operacionais e semanticas usadas na hipotese |
+| `mapping_nanda_candidates` | Top-k candidatos NANDA-I para ICDs sem keyword match |
+| `fact_nanda_hypothesis` | Hipoteses computacionais NANDA-I derivadas |
+| `fact_noc_measurement` | Indicadores NOC operacionalizados por variaveis observaveis |
+| `fact_nic_observed_proxy` | Proxies observaveis de acoes associadas a NIC |
+| `fact_nic_recommended` | Recomendacoes NIC por ligacao NNN documentada |
+| `nnn_linkage_rules` | Regras de ligacao NANDA-NOC-NIC |
 
----
+Campos de auditoria em `mapping_nanda_evidence`:
 
-## Metodologia de Mapeamento
+- `subject_id`
+- `hadm_id`
+- `nanda_domain`
+- `evidence_category`
+- `evidence_source`
+- `evidence_detail`
+- `semantic_score`
+- `inference_method`
+- `model_name`
+- `rank_position`
+- `limitation`
 
-### Esclarecimento metodológico fundamental
+Campos principais em `mapping_nanda_candidates`:
 
-O MIMIC-IV **não contém** diagnósticos de enfermagem registrados segundo NANDA-I, resultados mensurados segundo NOC ou intervenções codificadas segundo NIC. O MIMIC-IV é um banco de dados clínico centrado no modelo biomédico.
+- `icd_code`
+- `icd_description`
+- `candidate_domain`
+- `similarity_score`
+- `rank_position`
+- `model_name`
+- `accepted_as_top1`
 
-O que este projeto faz é construir uma **camada derivada de inferência computacional** utilizando **palavras-chave médicas + TF-IDF** como mecanismo exploratório de **triagem semântica** para sugerir domínios NANDA-I candidatos. A similaridade textual **não confirma diagnóstico** — apenas ranqueia candidatos. Sinais vitais anormais são usados como características definidoras adicionais. **NENHUM diagnóstico de enfermagem é confirmado.**
+## Sinais vitais e evidencias operacionais
 
-### O que NÃO é este projeto
+O projeto preserva limiares clinicos para taquicardia, hipotensao, hipoxemia, febre, dor intensa e GCS baixo. Esses sinais sao tratados como caracteristicas definidoras ou evidencias operacionais. Eles nao confirmam diagnostico NANDA-I.
 
-- Não extrai diagnósticos NANDA-I confirmados do MIMIC-IV
-- Não identifica intervenções NIC autônomas de enfermagem
-- Não mensura resultados NOC documentados por enfermeiros
-- Não valida clinicamente nenhuma hipótese
-- Não publica conteúdo proprietário integral das taxonomias
+## Site estatico
 
----
+O site em `docs/index.html` carrega CSVs de `data/` e permite consultas simples sobre as tabelas publicadas. Ele inclui a nota metodologica:
 
-## Transparência e Uso de IA Generativa
+> NANDA-I, NOC e NIC sao camadas derivadas por inferencia computacional, nao registros nativos do MIMIC-IV.
 
-**Declaração conforme Portaria CNPq nº 2.664/2026**
+## Testes
 
-Foram utilizadas ferramentas de inteligência artificial generativa, incluindo
-ChatGPT 5.5, DeepSeek-v4-Pro e Grok, para apoio à organização metodológica,
-revisão textual, depuração de código, auditoria e inferência de mapeamentos
-conceituais entre variáveis clínicas do MIMIC-IV e as terminologias NANDA-I,
-NOC e NIC por similaridade semântica. As ferramentas não substituíram a
-interpretação científica dos autores, que permanecem integralmente responsáveis
-pelo conteúdo final, pela veracidade das informações, pela originalidade,
-pelas análises, pelas referências e por eventuais erros ou imprecisões.
-
----
-
-## Limitações
-
-1. **MIMIC-IV não contém NANDA-I, NOC e NIC nativos**: todas as camadas são derivadas
-2. **Hipóteses não validadas**: nenhum registro foi submetido a validação por enfermeiro especialista
-3. **Nenhum diagnóstico confirmado**: status "rule_supported" é computacional, não clínico
-4. **Proxies NIC**: medicamentos e fluidos IV não distinguem ação médica de ação de enfermagem
-5. **Amostra limitada**: 100 pacientes (MIMIC-IV Demo)
-6. **Terminologias protegidas**: NANDA-I, NIC e NOC são marcas registradas. Apenas identificadores mínimos e referências bibliográficas são utilizados
-7. **Sem interoperabilidade implementada**: FHIR e openEHR são apenas referenciais teóricos
-8. **Inferência por similaridade textual**: o mapeamento por palavras-chave e TF-IDF é um mecanismo de triagem, não de diagnóstico
-
----
-
-## Governança e Compliance
-
-- Dados reais do MIMIC-IV completo NÃO são versionados
-- `.gitignore` bloqueia `*.sqlite`, `*.db`, `*.rds`, `*.csv.gz`, `*.parquet`, `mimiciv/`, `physionet/`, `raw/`
-- Resumo expandido NÃO é versionado no repositório
-- Nenhuma credencial, token ou chave exposta
-- `renv.lock` presente (138 pacotes, versões exatas)
-
----
-
-## Licença
-
-MIT License — veja [LICENSE](LICENSE) para detalhes.
-
----
-
-## Citação
-
-```bibtex
-@software{nursing_pool_2026,
-  author       = {Santos, Ryan de Paulo and Santos, Kerolyne Yngredy Rodrigues},
-  title        = {nursing-pool: Prova de conceito computacional para estruturação
-                  de dados de enfermagem a partir do MIMIC-IV},
-  year         = {2026},
-  url          = {https://github.com/santosry/nursing-pool},
-  note         = {Prova de conceito. Hipóteses NANDA-I/NOC/NIC derivadas. NÃO validado clinicamente.}
-}
+```bash
+pytest
 ```
+
+Os testes minimos verificam importacao do novo script, ordenacao do ranking por similaridade, prioridade do keyword match e retorno de dominio NANDA-I valido no fallback semantico.
+
+## Governanca de dados
+
+Nao versionar:
+
+- dados brutos protegidos;
+- arquivos `.csv.gz` do MIMIC-IV;
+- bancos `.sqlite` ou `.db`;
+- credenciais, tokens ou chaves;
+- artefatos pesados gerados localmente.
+
+O `.gitignore` bloqueia esses arquivos. Os CSVs leves em `data/` sao exports publicados para o GitHub Pages.
+
+## Limitacoes
+
+1. MIMIC-IV Demo nao contem NANDA-I, NOC ou NIC nativos.
+2. As hipoteses NANDA-I sao exploratorias e nao validadas clinicamente.
+3. Similaridade por Transformer ranqueia proximidade textual, nao confirma julgamento clinico.
+4. Proxies NIC nao distinguem prescritor, executor ou autonomia da acao.
+5. Indicadores NOC sao operacionalizacoes computacionais, nao registros NOC documentados por enfermeiros.
+6. O uso de NANDA-I/NOC/NIC e limitado a identificadores e descricoes resumidas para fins cientificos e de interoperabilidade.
+
+## Auditoria metodologica
+
+Veja `docs/transformer_method_audit.md` para detalhes sobre o modelo, tabelas alteradas, limites e plano de validacao futura com especialistas de enfermagem.
+
+## Licenca
+
+MIT License. Veja `LICENSE`.
