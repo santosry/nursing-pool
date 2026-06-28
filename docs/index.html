@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nursing-pool | Banco de Enfermagem</title>
+  <title>nursing-pool | Camada derivada NANDA-I/NOC/NIC</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f6f7f9;color:#24292f;line-height:1.45}
-    header{background:#102033;color:#fff;padding:22px 30px;border-bottom:4px solid #2c8f7b}
+    header{background:#102033;color:#fff;padding:24px 30px;border-bottom:4px solid #2c8f7b}
     header h1{font-size:1.55rem;font-weight:700}
-    header p{margin-top:6px;color:#d7dee8;font-size:.94rem}
-    .method-note{margin-top:12px;padding:10px 12px;background:#fff3cd;color:#4d3800;border-left:4px solid #e0a800;max-width:1100px}
-    main{max-width:1220px;margin:22px auto;padding:0 20px}
-    .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:18px}
+    header p{margin-top:6px;color:#d7dee8;font-size:.95rem}
+    .method-note{margin-top:14px;padding:12px 14px;background:#fff3cd;color:#4d3800;border-left:5px solid #e0a800;max-width:1160px}
+    main{max-width:1240px;margin:22px auto;padding:0 20px}
+    .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:18px}
     .card{background:#fff;border:1px solid #d8dee4;border-radius:8px;padding:14px}
     .card strong{display:block;color:#102033;font-size:.92rem}
     .card span{display:block;margin-top:4px;color:#57606a;font-size:.86rem}
-    .query-box,.results{background:#fff;border:1px solid #d8dee4;border-radius:8px;padding:18px;margin-bottom:18px}
+    .query-box,.results,.safe{background:#fff;border:1px solid #d8dee4;border-radius:8px;padding:18px;margin-bottom:18px}
     h2{font-size:1.1rem;margin-bottom:10px}
+    ul{padding-left:20px}
+    li{margin:5px 0}
     textarea{width:100%;min-height:92px;font-family:Consolas,Monaco,monospace;font-size:.92rem;padding:10px;border:1px solid #c9d1d9;border-radius:6px;resize:vertical}
     .buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
     button{border:1px solid #c9d1d9;border-radius:6px;background:#f6f8fa;color:#24292f;padding:8px 12px;cursor:pointer}
@@ -35,45 +37,55 @@
 </head>
 <body>
   <header>
-    <h1>nursing-pool | Banco de Enfermagem derivado do MIMIC-IV Demo</h1>
-    <p>Mapeamento hibrido: palavras-chave clinicas + fallback semantico por Transformer biomedico.</p>
+    <h1>nursing-pool | Camada derivada NANDA-I/NOC/NIC no MIMIC-IV Demo</h1>
+    <p>Prova de conceito computacional com arquitetura relacional auditável, regras clínicas e fallback semântico por Transformer biomédico.</p>
     <div class="method-note">
-      NANDA-I, NOC e NIC sao camadas derivadas por inferencia computacional, nao registros nativos do MIMIC-IV. Nenhuma saida representa diagnostico NANDA-I confirmado.
+      O MIMIC-IV Demo não contém NANDA-I, NOC ou NIC nativos documentados por enfermeiros. Esta página consulta uma camada derivada e exploratória. Hipóteses NANDA-I, indicadores NOC e proxies NIC não são diagnósticos, resultados ou intervenções clinicamente confirmados.
     </div>
   </header>
 
   <main>
     <section class="summary">
-      <div class="card"><strong>Metodo</strong><span>Regras clinicas primeiro; Transformer apenas no fallback semantico.</span></div>
-      <div class="card"><strong>Auditoria</strong><span>`semantic_score`, `model_name` e `rank_position` nas evidencias.</span></div>
-      <div class="card"><strong>Candidatos</strong><span>`mapping_nanda_candidates` preserva top-k por descricao ICD.</span></div>
-      <div class="card"><strong>Escopo</strong><span>Camada exploratoria nao validada clinicamente.</span></div>
+      <div class="card"><strong>Banco</strong><span>42 tabelas, 100 pacientes, 275 admissões e 140 estadias em UTI.</span></div>
+      <div class="card"><strong>Evidências</strong><span>25.072 registros com método, escore, modelo e limitação.</span></div>
+      <div class="card"><strong>Camada derivada</strong><span>1.629 hipóteses NANDA-I, 685 indicadores NOC e 55.233 proxies NIC.</span></div>
+      <div class="card"><strong>Auditoria</strong><span>1.998 candidatos top-k e 1.365 recomendações NIC derivadas por regras NNN.</span></div>
+    </section>
+
+    <section class="safe">
+      <h2>Interpretação segura</h2>
+      <ul>
+        <li>Hipótese computacional NANDA-I não é diagnóstico de enfermagem confirmado.</li>
+        <li>Indicador NOC operacionalizado não é resultado NOC documentado por enfermeiro.</li>
+        <li>Proxy NIC é evento observável, como medicamento ou fluido IV, e não prova intervenção autônoma de enfermagem.</li>
+        <li>Recomendação NIC derivada por regras NNN não é prescrição clínica.</li>
+      </ul>
     </section>
 
     <section class="query-box">
       <h2>Consulta SQL simples</h2>
-      <textarea id="sql">SELECT * FROM mapping_nanda_evidence LIMIT 10;</textarea>
+      <textarea id="sql">SELECT inference_method, COUNT(*) AS n FROM mapping_nanda_evidence GROUP BY inference_method ORDER BY n DESC;</textarea>
       <div class="buttons">
         <button class="primary" onclick="execQuery()">Executar</button>
-        <button onclick="example(1)">Evidencias NANDA</button>
+        <button onclick="example(1)">Métodos de evidência</button>
         <button onclick="example(2)">Candidatos Transformer</button>
-        <button onclick="example(3)">Hipoteses</button>
-        <button onclick="example(4)">NOC</button>
-        <button onclick="example(5)">NIC proxies</button>
-        <button onclick="example(6)">ICD</button>
-        <button onclick="example(7)">Sinais vitais</button>
+        <button onclick="example(3)">Hipóteses NANDA-I</button>
+        <button onclick="example(4)">Indicadores NOC</button>
+        <button onclick="example(5)">Proxies NIC</button>
+        <button onclick="example(6)">Dados ICD observados</button>
+        <button onclick="example(7)">Dados vitais observados</button>
       </div>
       <div class="info" id="info">Carregando CSVs...</div>
     </section>
 
     <section class="results" id="results">
       <h2>Resultados</h2>
-      <p class="info">Execute uma consulta ou escolha um exemplo.</p>
+      <p class="info">Execute uma consulta ou escolha um exemplo. A consulta é demonstrativa e opera sobre CSVs publicados no GitHub Pages.</p>
     </section>
   </main>
 
   <footer>
-    nursing-pool | MIMIC-IV Demo v2.2 | Hipoteses NANDA-I/NOC/NIC derivadas por inferencia computacional, nao validadas clinicamente.
+    nursing-pool | MIMIC-IV Demo v2.2 | Camada derivada exploratória, auditável e não validada clinicamente.
   </footer>
 
   <script>
@@ -149,12 +161,12 @@
       const target = tableFromSql(sql);
       const panel = document.querySelector("#results");
       if(!target){
-        panel.innerHTML = '<div class="error">Use uma consulta no formato SELECT * FROM nome_da_tabela LIMIT 10.</div>';
+        panel.innerHTML = '<div class="error">Use uma consulta no formato SELECT ... FROM nome_da_tabela LIMIT 10.</div>';
         return;
       }
       const table = Object.keys(DB).find(name => name.toLowerCase() === target);
       if(!table){
-        panel.innerHTML = `<div class="error">Tabela "${target}" nao encontrada. Disponiveis: ${Object.keys(DB).sort().join(", ")}</div>`;
+        panel.innerHTML = `<div class="error">Tabela "${target}" não encontrada. Disponíveis: ${Object.keys(DB).sort().join(", ")}</div>`;
         return;
       }
       const rows = DB[table].rows.slice(0, limitFromSql(sql));
@@ -172,12 +184,12 @@
 
     function example(id){
       const examples = {
-        1: "SELECT subject_id, hadm_id, nanda_domain, semantic_score, inference_method, model_name, rank_position FROM mapping_nanda_evidence LIMIT 20;",
-        2: "SELECT icd_code, icd_description, candidate_domain, similarity_score, rank_position, model_name, accepted_as_top1 FROM mapping_nanda_candidates LIMIT 20;",
-        3: "SELECT nanda_domain, status, best_semantic_score, inference_method FROM fact_nanda_hypothesis LIMIT 20;",
+        1: "SELECT inference_method, COUNT(*) AS n FROM mapping_nanda_evidence GROUP BY inference_method ORDER BY n DESC;",
+        2: "SELECT icd_code, icd_description, candidate_domain, similarity_score, rank_position, model_name FROM mapping_nanda_candidates WHERE accepted_as_top1 = 1 LIMIT 20;",
+        3: "SELECT nanda_domain, status, best_semantic_score, inference_method, limitation FROM fact_nanda_hypothesis LIMIT 20;",
         4: "SELECT noc_label, indicator, baseline_value, followup_value, limitation FROM fact_noc_measurement LIMIT 20;",
         5: "SELECT nic_label_proxy, action_type, limitation FROM fact_nic_observed_proxy LIMIT 20;",
-        6: "SELECT * FROM diagnoses_icd LIMIT 20;",
+        6: "SELECT subject_id, hadm_id, icd_code, icd_version, seq_num FROM diagnoses_icd LIMIT 20;",
         7: "SELECT subject_id, hadm_id, itemid, valuenum FROM chartevents LIMIT 20;"
       };
       document.querySelector("#sql").value = examples[id] || "";
